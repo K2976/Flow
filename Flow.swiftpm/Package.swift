@@ -1,0 +1,36 @@
+// swift-tools-version: 6.0
+import PackageDescription
+
+let package = Package(
+    name: "Flow",
+    platforms: [
+        .macOS(.v15)
+    ],
+    targets: [
+        .executableTarget(
+            name: "Flow",
+            path: ".",
+            sources: [
+                "FlowApp.swift",
+                "DesignSystem.swift",
+                "AttentionEvent.swift",
+                "CognitiveLoadEngine.swift",
+                "SessionManager.swift",
+                "SimulationManager.swift",
+                "AudioManager.swift",
+                "HapticsManager.swift",
+                "ScienceInsights.swift",
+                "FocusOrbView.swift",
+                "MiniOrbView.swift",
+                "OnboardingView.swift",
+                "DashboardView.swift",
+                "CognitiveLoadGraphView.swift",
+                "FocusModeView.swift",
+                "RecoveryView.swift",
+                "SessionSummaryView.swift",
+                "HistoryStripView.swift",
+                "MenuBarManager.swift"
+            ]
+        )
+    ]
+)
