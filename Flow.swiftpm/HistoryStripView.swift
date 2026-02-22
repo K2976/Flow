@@ -58,27 +58,66 @@ struct HistoryStripView: View {
     }
     
     private func dayDetail(_ day: DaySummary) -> some View {
-        HStack(spacing: 16) {
-            VStack(alignment: .leading, spacing: 2) {
-                Text(fullDayLabel(day.date))
-                    .font(FlowTypography.bodyFont(size: 13))
-                    .foregroundStyle(.white.opacity(0.7))
+        let sessions = sessionManager.savedSessions(for: day.date)
+        
+        return VStack(alignment: .leading, spacing: 8) {
+            // Day overview
+            HStack(spacing: 16) {
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(fullDayLabel(day.date))
+                        .font(FlowTypography.bodyFont(size: 13))
+                        .foregroundStyle(.white.opacity(0.7))
+                    
+                    Text("Avg: \(Int(day.averageScore)) • Peak: \(Int(day.peakScore))")
+                        .font(FlowTypography.captionFont(size: 11))
+                        .foregroundStyle(.white.opacity(0.4))
+                }
                 
-                Text("Avg: \(Int(day.averageScore)) • Peak: \(Int(day.peakScore))")
-                    .font(FlowTypography.captionFont(size: 11))
-                    .foregroundStyle(.white.opacity(0.4))
+                Spacer()
+                
+                VStack(alignment: .trailing, spacing: 2) {
+                    Text("\(day.eventCount) events")
+                        .font(FlowTypography.captionFont(size: 11))
+                        .foregroundStyle(.white.opacity(0.4))
+                    
+                    Text("\(Int(day.totalMinutes))m tracked")
+                        .font(FlowTypography.captionFont(size: 11))
+                        .foregroundStyle(.white.opacity(0.3))
+                }
             }
             
-            Spacer()
-            
-            VStack(alignment: .trailing, spacing: 2) {
-                Text("\(day.eventCount) events")
-                    .font(FlowTypography.captionFont(size: 11))
-                    .foregroundStyle(.white.opacity(0.4))
+            // Saved sessions for this day
+            if !sessions.isEmpty {
+                Divider()
+                    .background(.white.opacity(0.08))
                 
-                Text("\(Int(day.totalMinutes))m tracked")
-                    .font(FlowTypography.captionFont(size: 11))
-                    .foregroundStyle(.white.opacity(0.3))
+                ForEach(sessions) { session in
+                    HStack(spacing: 10) {
+                        Image(systemName: "bookmark.fill")
+                            .font(.system(size: 10))
+                            .foregroundStyle(FlowColors.color(for: session.averageScore).opacity(0.7))
+                        
+                        VStack(alignment: .leading, spacing: 1) {
+                            Text(session.name ?? "Session")
+                                .font(FlowTypography.bodyFont(size: 12))
+                                .foregroundStyle(.white.opacity(0.6))
+                            
+                            let duration = Int(session.endTime.timeIntervalSince(session.startTime))
+                            let mins = duration / 60
+                            let secs = duration % 60
+                            Text("\(mins)m \(secs)s • Avg: \(Int(session.averageScore)) • Peak: \(Int(session.peakScore))")
+                                .font(FlowTypography.captionFont(size: 10))
+                                .foregroundStyle(.white.opacity(0.3))
+                        }
+                        
+                        Spacer()
+                        
+                        Text("\(session.eventCount) events")
+                            .font(FlowTypography.captionFont(size: 10))
+                            .foregroundStyle(.white.opacity(0.3))
+                    }
+                    .padding(.vertical, 4)
+                }
             }
         }
         .padding(.horizontal, 12)

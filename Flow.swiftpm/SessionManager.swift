@@ -10,6 +10,7 @@ final class SessionManager {
     private(set) var isSessionActive: Bool = true
     private(set) var sessionStartTime: Date = Date()
     private(set) var completedSessions: [SessionRecord] = []
+    private(set) var savedSessions: [SessionRecord] = []
     private(set) var showingSummary: Bool = false
     private(set) var lastSession: SessionRecord?
     
@@ -36,6 +37,24 @@ final class SessionManager {
         
         // Update today in week history
         updateTodayHistory(record: record)
+    }
+    
+    func saveSession(name: String, engine: CognitiveLoadEngine) {
+        guard var session = lastSession else { return }
+        session.name = name.isEmpty ? "Session" : name
+        savedSessions.append(session)
+        
+        // Update day history with this saved session
+        updateTodayHistory(record: session)
+        
+        // Reset and start new
+        showingSummary = false
+        startNewSession(engine: engine)
+    }
+    
+    func savedSessions(for date: Date) -> [SessionRecord] {
+        let calendar = Calendar.current
+        return savedSessions.filter { calendar.isDate($0.startTime, inSameDayAs: date) }
     }
     
     func dismissSummary() {

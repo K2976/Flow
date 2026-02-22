@@ -66,6 +66,7 @@ struct DaySummary: Identifiable {
 
 struct SessionRecord: Identifiable {
     let id = UUID()
+    var name: String?
     let startTime: Date
     let endTime: Date
     let startScore: Double
