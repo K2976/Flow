@@ -52,12 +52,21 @@ final class CognitiveLoadEngine {
             scoreAfter: score
         )
         events.append(record)
+        
+        // Keep events bounded
+        if events.count > 50 {
+            events.removeFirst(events.count - 50)
+        }
     }
     
     func setScore(_ newScore: Double) {
-        score = min(max(newScore, 0), 100)
-        state = CognitiveState.from(score: score)
-        scoreHistory.append(score)
+        let clamped = min(max(newScore, 0), 100)
+        score = clamped
+        let newState = CognitiveState.from(score: clamped)
+        if newState != state {
+            state = newState
+        }
+        scoreHistory.append(clamped)
     }
     
     func setInitialScore(_ value: Double) {
@@ -130,8 +139,8 @@ final class CognitiveLoadEngine {
         }
         takeSnapshot()
         
-        // Animated score interpolation
-        animationTimer = Timer.scheduledTimer(withTimeInterval: 1.0 / 30.0, repeats: true) { [weak self] _ in
+        // Animated score interpolation — 10fps is enough since the orb has its own 60fps Canvas
+        animationTimer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { [weak self] _ in
             Task { @MainActor in
                 self?.updateAnimatedScore()
             }
@@ -164,8 +173,11 @@ final class CognitiveLoadEngine {
     
     private func updateAnimatedScore() {
         let diff = score - animatedScore
-        if abs(diff) < 0.1 {
-            animatedScore = score
+        if abs(diff) < 0.5 {
+            // Only update if actually different to avoid triggering @Observable
+            if animatedScore != score {
+                animatedScore = score
+            }
         } else {
             animatedScore += diff * 0.15
         }

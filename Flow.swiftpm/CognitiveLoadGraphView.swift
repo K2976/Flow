@@ -6,6 +6,12 @@ import Charts
 struct CognitiveLoadGraphView: View {
     @Environment(CognitiveLoadEngine.self) private var engine
     
+    // Throttled data — only updates every 2 seconds instead of on every event
+    @State private var displayHistory: [LoadSnapshot] = []
+    @State private var displayEvents: [AttentionEventRecord] = []
+    @State private var displayResets: [Date] = []
+    @State private var updateTimer: Timer?
+    
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             Text("ATTENTION TIMELINE")
@@ -14,8 +20,8 @@ struct CognitiveLoadGraphView: View {
                 .tracking(1.5)
             
             Chart {
-                // Main line
-                ForEach(engine.history) { snapshot in
+                // Main line only — no AreaMark for performance
+                ForEach(displayHistory) { snapshot in
                     LineMark(
                         x: .value("Time", snapshot.timestamp),
                         y: .value("Load", snapshot.score)
@@ -32,23 +38,7 @@ struct CognitiveLoadGraphView: View {
                         )
                     )
                     .lineStyle(StrokeStyle(lineWidth: 2, lineCap: .round, lineJoin: .round))
-                    .interpolationMethod(.catmullRom)
-                    
-                    AreaMark(
-                        x: .value("Time", snapshot.timestamp),
-                        y: .value("Load", snapshot.score)
-                    )
-                    .foregroundStyle(
-                        .linearGradient(
-                            colors: [
-                                FlowColors.color(for: engine.animatedScore).opacity(0.15),
-                                FlowColors.color(for: engine.animatedScore).opacity(0.02)
-                            ],
-                            startPoint: .top,
-                            endPoint: .bottom
-                        )
-                    )
-                    .interpolationMethod(.catmullRom)
+                    .interpolationMethod(.monotone)
                 }
                 
                 // Threshold lines
@@ -65,7 +55,7 @@ struct CognitiveLoadGraphView: View {
                     .lineStyle(StrokeStyle(lineWidth: 0.5, dash: [4, 4]))
                 
                 // Event markers
-                ForEach(engine.events.suffix(20)) { event in
+                ForEach(displayEvents) { event in
                     PointMark(
                         x: .value("Time", event.timestamp),
                         y: .value("Load", event.scoreAfter)
@@ -74,8 +64,8 @@ struct CognitiveLoadGraphView: View {
                     .symbolSize(20)
                 }
                 
-                // Reset markers — vertical dotted lines where recovery resets happened
-                ForEach(engine.resetTimestamps, id: \.self) { resetTime in
+                // Reset markers
+                ForEach(displayResets, id: \.self) { resetTime in
                     RuleMark(x: .value("Reset", resetTime))
                         .foregroundStyle(.white.opacity(0.25))
                         .lineStyle(StrokeStyle(lineWidth: 1, dash: [3, 3]))
@@ -125,6 +115,25 @@ struct CognitiveLoadGraphView: View {
                     .border(.white.opacity(0.05), width: 0.5)
             }
             .frame(height: 140)
+            .drawingGroup()
         }
+        .onAppear { startThrottledUpdates() }
+        .onDisappear { updateTimer?.invalidate() }
+    }
+    
+    // Only refresh chart data every 2 seconds to prevent lag from rapid button presses
+    private func startThrottledUpdates() {
+        refreshDisplayData()
+        updateTimer = Timer.scheduledTimer(withTimeInterval: 2.0, repeats: true) { _ in
+            Task { @MainActor in
+                refreshDisplayData()
+            }
+        }
+    }
+    
+    private func refreshDisplayData() {
+        displayHistory = Array(engine.history.suffix(80))
+        displayEvents = Array(engine.events.suffix(15))
+        displayResets = engine.resetTimestamps
     }
 }

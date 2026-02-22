@@ -24,7 +24,7 @@ struct FocusOrbView: View {
     }
     
     var body: some View {
-        TimelineView(.animation(minimumInterval: 1.0/60.0)) { timeline in
+        TimelineView(.animation(minimumInterval: 1.0/30.0)) { timeline in
             Canvas { context, canvasSize in
                 let now = timeline.date.timeIntervalSinceReferenceDate
                 drawOrb(context: context, size: canvasSize, time: now)
