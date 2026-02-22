@@ -99,6 +99,30 @@ struct DashboardView: View {
             
             Spacer()
             
+            // Mute Toggle
+            Button {
+                audio.isMuted.toggle()
+                if audio.isMuted {
+                    audio.stopAmbient()
+                } else {
+                    audio.startAmbient()
+                }
+            } label: {
+                Image(systemName: audio.isMuted ? "speaker.slash.fill" : "speaker.wave.2.fill")
+                    .font(.system(size: 14))
+                    .foregroundStyle(audio.isMuted ? .white.opacity(0.3) : .white.opacity(0.6))
+                    .frame(width: 36, height: 36)
+                    .background(
+                        Circle()
+                            .fill(.white.opacity(audio.isMuted ? 0.04 : 0.06))
+                    )
+                    .overlay(
+                        Circle()
+                            .stroke(.white.opacity(0.08), lineWidth: 0.5)
+                    )
+            }
+            .buttonStyle(.plain)
+            
             // Focus Mode Toggle
             Button {
                 withAnimation(FlowAnimation.viewTransition) {

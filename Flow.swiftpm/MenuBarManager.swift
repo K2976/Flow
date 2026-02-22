@@ -18,7 +18,8 @@ final class MenuBarManager {
         
         if let button = item.button {
             let imageView = NSHostingView(rootView:
-                MiniOrbView(score: engine.animatedScore, size: 18)
+                MenuBarOrbView()
+                    .environment(engine)
             )
             imageView.frame = NSRect(x: 0, y: 0, width: 22, height: 22)
             button.addSubview(imageView)
@@ -58,6 +59,16 @@ final class MenuBarManager {
 extension NSApplication {
     @objc func togglePopover(_ sender: Any?) {
         // Placeholder — actual toggle handled by manager
+    }
+}
+
+// MARK: - Menu Bar Orb Wrapper (reads engine from environment for live updates)
+
+struct MenuBarOrbView: View {
+    @Environment(CognitiveLoadEngine.self) private var engine
+    
+    var body: some View {
+        MiniOrbView(score: engine.animatedScore, size: 18)
     }
 }
 
