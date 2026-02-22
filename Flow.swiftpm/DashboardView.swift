@@ -128,27 +128,23 @@ struct DashboardView: View {
                 withAnimation(FlowAnimation.viewTransition) {
                     engine.isFocusMode.toggle()
                     audio.setFocusMode(engine.isFocusMode)
+                    toggleMacOSFocus(engine.isFocusMode)
                 }
             } label: {
-                HStack(spacing: 6) {
-                    Image(systemName: engine.isFocusMode ? "moon.fill" : "moon")
-                        .font(.system(size: 14))
-                    Text(engine.isFocusMode ? "Focus On" : "Focus")
-                        .font(FlowTypography.captionFont(size: 13))
-                }
-                .foregroundStyle(engine.isFocusMode ? .white : .white.opacity(0.5))
-                .padding(.horizontal, 14)
-                .padding(.vertical, 7)
-                .background(
-                    Capsule()
-                        .fill(engine.isFocusMode ?
-                              FlowColors.color(for: 30).opacity(0.3) :
-                              .white.opacity(0.06))
-                )
-                .overlay(
-                    Capsule()
-                        .stroke(.white.opacity(engine.isFocusMode ? 0.2 : 0.08), lineWidth: 0.5)
-                )
+                Image(systemName: engine.isFocusMode ? "moon.fill" : "moon")
+                    .font(.system(size: 14))
+                    .foregroundStyle(engine.isFocusMode ? .white : .white.opacity(0.5))
+                    .frame(width: 36, height: 36)
+                    .background(
+                        Circle()
+                            .fill(engine.isFocusMode ?
+                                  FlowColors.color(for: 30).opacity(0.3) :
+                                  .white.opacity(0.06))
+                    )
+                    .overlay(
+                        Circle()
+                            .stroke(.white.opacity(engine.isFocusMode ? 0.2 : 0.08), lineWidth: 0.5)
+                    )
             }
             .buttonStyle(.plain)
             .keyboardShortcut("f", modifiers: .command)
@@ -245,6 +241,53 @@ struct DashboardView: View {
         withAnimation(.easeInOut(duration: 0.4).delay(0.15)) {
             orbPulseAmount = 1.0
         }
+    }
+    
+    // MARK: - macOS Focus Mode
+    
+    private func toggleMacOSFocus(_ enabled: Bool) {
+        #if os(macOS)
+        // Use shortcuts CLI to run a Focus shortcut if available,
+        // otherwise fall back to AppleScript to toggle Do Not Disturb
+        Task.detached {
+            let script: String
+            if enabled {
+                script = """
+                tell application "System Events"
+                    tell process "ControlCenter"
+                        -- Click Focus in menu bar
+                        click menu bar item "Focus" of menu bar 1
+                        delay 0.5
+                        -- Click Do Not Disturb
+                        try
+                            click checkbox "Do Not Disturb" of group 1 of section 1 of window "Control Center"
+                        end try
+                    end tell
+                end tell
+                """
+            } else {
+                script = """
+                tell application "System Events"
+                    tell process "ControlCenter"
+                        click menu bar item "Focus" of menu bar 1
+                        delay 0.5
+                        try
+                            click checkbox "Do Not Disturb" of group 1 of section 1 of window "Control Center"
+                        end try
+                        delay 0.3
+                        -- Dismiss the panel
+                        key code 53
+                    end tell
+                end tell
+                """
+            }
+            
+            if let appleScript = NSAppleScript(source: script) {
+                var error: NSDictionary?
+                appleScript.executeAndReturnError(&error)
+            }
+        }
+        #endif
     }
     
     // MARK: - Bottom Bar

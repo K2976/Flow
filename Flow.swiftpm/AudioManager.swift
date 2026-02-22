@@ -55,6 +55,7 @@ final class AudioManager {
         appendUInt32(&data, UInt32(36 + dataSize))      // file size - 8
         data.append(contentsOf: "WAVE".utf8)
         
+        
         // fmt chunk
         data.append(contentsOf: "fmt ".utf8)
         appendUInt32(&data, 16)                           // chunk size

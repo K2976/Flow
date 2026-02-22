@@ -111,7 +111,7 @@ struct RecoveryView: View {
     
     private func startRecovery() {
         isRecovering = true
-        engine.triggerAcceleratedDecay(amount: 25, duration: 10)
+        engine.triggerAcceleratedDecay(amount: max(engine.score - 20, 0), duration: 10)
         
         // Breathing animation over 10 seconds (5 cycles of 2 seconds)
         let cycleDuration: Double = 2.0
@@ -143,8 +143,9 @@ struct RecoveryView: View {
             recoveryProgress = 1.0
         }
         
-        // Complete after 10 seconds
+        // Complete after 10 seconds — ensure score is at baseline
         DispatchQueue.main.asyncAfter(deadline: .now() + totalDuration) {
+            engine.setScore(20)
             withAnimation(FlowAnimation.viewTransition) {
                 isPresented = false
             }
