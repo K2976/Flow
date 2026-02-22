@@ -77,7 +77,7 @@ struct SessionSummaryView: View {
                             .font(FlowTypography.captionFont(size: 12))
                             .foregroundStyle(.white.opacity(0.5))
                         
-                        TextField("e.g. Deep Work, Morning Focus...", text: $sessionName)
+                        TextField("Session name...", text: $sessionName)
                             .font(FlowTypography.bodyFont(size: 14))
                             .foregroundStyle(.white)
                             .padding(.horizontal, 14)
@@ -93,7 +93,19 @@ struct SessionSummaryView: View {
                             .textFieldStyle(.plain)
                             .focused($isNameFieldFocused)
                             .onAppear {
-                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                                // Pre-fill a default name
+                                let formatter = DateFormatter()
+                                formatter.dateFormat = "h:mm a"
+                                sessionName = "Session – \(formatter.string(from: session.startTime))"
+                                
+                                // Force the app window to become key so TextField gets keyboard input
+                                #if os(macOS)
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                                    NSApplication.shared.activate(ignoringOtherApps: true)
+                                    NSApp.keyWindow?.makeKey()
+                                }
+                                #endif
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
                                     isNameFieldFocused = true
                                 }
                             }
