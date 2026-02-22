@@ -24,37 +24,37 @@ struct DashboardView: View {
                 .ignoresSafeArea()
                 .animation(FlowAnimation.colorTransition, value: engine.animatedScore)
             
-            VStack(spacing: 0) {
-                // Header
-                headerSection
-                    .padding(.horizontal, 32)
-                    .padding(.top, 16)
-                
-                Spacer()
-                
-                // Center orb area
-                orbSection
-                
-                Spacer()
-                
-                // Event buttons
-                eventButtonsSection
-                    .padding(.horizontal, 32)
-                
-                // Graph
-                CognitiveLoadGraphView()
-                    .padding(.horizontal, 32)
-                    .padding(.top, 20)
-                
-                // History strip
-                HistoryStripView()
-                    .padding(.horizontal, 32)
-                    .padding(.top, 16)
-                
-                // Bottom bar
-                bottomBar
-                    .padding(.horizontal, 32)
-                    .padding(.vertical, 16)
+            ScrollView(.vertical, showsIndicators: false) {
+                VStack(spacing: 0) {
+                    // Header
+                    headerSection
+                        .padding(.horizontal, 32)
+                        .padding(.top, 16)
+                    
+                    // Center orb area
+                    orbSection
+                        .padding(.top, 24)
+                    
+                    // Event buttons
+                    eventButtonsSection
+                        .padding(.horizontal, 32)
+                        .padding(.top, 24)
+                    
+                    // Graph
+                    CognitiveLoadGraphView()
+                        .padding(.horizontal, 32)
+                        .padding(.top, 20)
+                    
+                    // History strip
+                    HistoryStripView()
+                        .padding(.horizontal, 32)
+                        .padding(.top, 16)
+                    
+                    // Bottom bar
+                    bottomBar
+                        .padding(.horizontal, 32)
+                        .padding(.vertical, 16)
+                }
             }
             
             // Recovery overlay

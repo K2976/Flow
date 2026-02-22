@@ -87,6 +87,9 @@ final class CognitiveLoadEngine {
         events.removeAll()
         history.removeAll()
         scoreHistory.removeAll()
+        score = 20.0
+        animatedScore = 20.0
+        state = CognitiveState.from(score: score)
         sessionStartTime = Date()
         sessionStartScore = score
         takeSnapshot()

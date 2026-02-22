@@ -40,7 +40,7 @@ struct FocusOrbView: View {
         let normalizedScore = min(max(score, 0), 100) / 100.0
         
         // Base radius with score-based scaling
-        let baseRadius = min(size.width, size.height) * 0.32
+        let baseRadius = min(size.width, size.height) * 0.22
         let scoreScale = 1.0 + normalizedScore * 0.25
         
         // Breathing pulse
