@@ -6,6 +6,8 @@ enum AttentionEvent: String, CaseIterable, Identifiable {
     case appSwitch = "App Switch"
     case notification = "Notification"
     case mindWandered = "Mind Wandered"
+    case idle = "Idle"
+    case rapidSwitch = "Rapid Switching"
     
     var id: String { rawValue }
     
@@ -14,6 +16,8 @@ enum AttentionEvent: String, CaseIterable, Identifiable {
         case .appSwitch: return 8
         case .notification: return 6
         case .mindWandered: return 5
+        case .idle: return 7
+        case .rapidSwitch: return 10
         }
     }
     
@@ -22,6 +26,8 @@ enum AttentionEvent: String, CaseIterable, Identifiable {
         case .appSwitch: return "rectangle.on.rectangle"
         case .notification: return "bell.fill"
         case .mindWandered: return "cloud.fill"
+        case .idle: return "powersleep"
+        case .rapidSwitch: return "arrow.triangle.swap"
         }
     }
     
@@ -30,6 +36,16 @@ enum AttentionEvent: String, CaseIterable, Identifiable {
         case .appSwitch: return "⌘1"
         case .notification: return "⌘2"
         case .mindWandered: return "Space"
+        case .idle: return ""
+        case .rapidSwitch: return ""
+        }
+    }
+    
+    /// Whether this event appears as a manual button in the dashboard
+    var isManual: Bool {
+        switch self {
+        case .appSwitch, .notification, .mindWandered: return true
+        case .idle, .rapidSwitch: return false
         }
     }
 }

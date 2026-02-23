@@ -37,6 +37,13 @@
     "swift-dependencies": "/Users/kartik/Documents/WWDC26/Flow.swiftpm/.build/arm64-apple-macosx/debug/Flow.build/DashboardView.swiftdeps",
     "diagnostics": "/Users/kartik/Documents/WWDC26/Flow.swiftpm/.build/arm64-apple-macosx/debug/Flow.build/DashboardView.dia"
   },
+  "/Users/kartik/Documents/WWDC26/Flow.swiftpm/DemoManager.swift": {
+    "dependencies": "/Users/kartik/Documents/WWDC26/Flow.swiftpm/.build/arm64-apple-macosx/debug/Flow.build/DemoManager.d",
+    "object": "/Users/kartik/Documents/WWDC26/Flow.swiftpm/.build/arm64-apple-macosx/debug/Flow.build/DemoManager.swift.o",
+    "swiftmodule": "/Users/kartik/Documents/WWDC26/Flow.swiftpm/.build/arm64-apple-macosx/debug/Flow.build/DemoManager~partial.swiftmodule",
+    "swift-dependencies": "/Users/kartik/Documents/WWDC26/Flow.swiftpm/.build/arm64-apple-macosx/debug/Flow.build/DemoManager.swiftdeps",
+    "diagnostics": "/Users/kartik/Documents/WWDC26/Flow.swiftpm/.build/arm64-apple-macosx/debug/Flow.build/DemoManager.dia"
+  },
   "/Users/kartik/Documents/WWDC26/Flow.swiftpm/DesignSystem.swift": {
     "dependencies": "/Users/kartik/Documents/WWDC26/Flow.swiftpm/.build/arm64-apple-macosx/debug/Flow.build/DesignSystem.d",
     "object": "/Users/kartik/Documents/WWDC26/Flow.swiftpm/.build/arm64-apple-macosx/debug/Flow.build/DesignSystem.swift.o",
@@ -99,6 +106,13 @@
     "swiftmodule": "/Users/kartik/Documents/WWDC26/Flow.swiftpm/.build/arm64-apple-macosx/debug/Flow.build/OnboardingView~partial.swiftmodule",
     "swift-dependencies": "/Users/kartik/Documents/WWDC26/Flow.swiftpm/.build/arm64-apple-macosx/debug/Flow.build/OnboardingView.swiftdeps",
     "diagnostics": "/Users/kartik/Documents/WWDC26/Flow.swiftpm/.build/arm64-apple-macosx/debug/Flow.build/OnboardingView.dia"
+  },
+  "/Users/kartik/Documents/WWDC26/Flow.swiftpm/RealEventDetector.swift": {
+    "dependencies": "/Users/kartik/Documents/WWDC26/Flow.swiftpm/.build/arm64-apple-macosx/debug/Flow.build/RealEventDetector.d",
+    "object": "/Users/kartik/Documents/WWDC26/Flow.swiftpm/.build/arm64-apple-macosx/debug/Flow.build/RealEventDetector.swift.o",
+    "swiftmodule": "/Users/kartik/Documents/WWDC26/Flow.swiftpm/.build/arm64-apple-macosx/debug/Flow.build/RealEventDetector~partial.swiftmodule",
+    "swift-dependencies": "/Users/kartik/Documents/WWDC26/Flow.swiftpm/.build/arm64-apple-macosx/debug/Flow.build/RealEventDetector.swiftdeps",
+    "diagnostics": "/Users/kartik/Documents/WWDC26/Flow.swiftpm/.build/arm64-apple-macosx/debug/Flow.build/RealEventDetector.dia"
   },
   "/Users/kartik/Documents/WWDC26/Flow.swiftpm/RecoveryView.swift": {
     "dependencies": "/Users/kartik/Documents/WWDC26/Flow.swiftpm/.build/arm64-apple-macosx/debug/Flow.build/RecoveryView.d",

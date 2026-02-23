@@ -97,7 +97,7 @@ struct MenuBarPopoverView: View {
                 .background(.white.opacity(0.1))
             
             HStack(spacing: 8) {
-                ForEach(AttentionEvent.allCases) { event in
+                ForEach(AttentionEvent.allCases.filter(\.isManual)) { event in
                     Button {
                         simulation.userHasInteracted = true
                         engine.logEvent(event)

@@ -53,7 +53,7 @@ final class SimulationManager {
         }
         
         // Pick a random event type
-        let events: [AttentionEvent] = [.appSwitch, .notification, .mindWandered, .notification, .appSwitch]
+        let events: [AttentionEvent] = [.appSwitch, .notification, .mindWandered, .notification, .appSwitch, .idle, .rapidSwitch]
         let event = events[eventCount % events.count]
         
         engine.logEvent(event)

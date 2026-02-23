@@ -17,6 +17,8 @@ let package = Package(
                 "CognitiveLoadEngine.swift",
                 "SessionManager.swift",
                 "SimulationManager.swift",
+                "DemoManager.swift",
+                "RealEventDetector.swift",
                 "AudioManager.swift",
                 "HapticsManager.swift",
                 "ScienceInsights.swift",

@@ -5,8 +5,10 @@ import SwiftUI
 @main
 struct FlowApp: App {
     @State private var engine = CognitiveLoadEngine()
-    @State private var sessionManager = SessionManager()
+    @State private var demoManager = DemoManager()
+    @State private var sessionManager: SessionManager
     @State private var simulation = SimulationManager()
+    @State private var realDetector = RealEventDetector()
     @State private var audio = AudioManager()
     @State private var menuBar = MenuBarManager()
     
@@ -14,6 +16,12 @@ struct FlowApp: App {
     
     @AppStorage("hasOnboarded") private var hasOnboarded = false
     @State private var showFocusMode = false
+    
+    init() {
+        let demo = DemoManager()
+        _demoManager = State(initialValue: demo)
+        _sessionManager = State(initialValue: SessionManager(isDemoMode: demo.isDemoMode))
+    }
     
     var body: some Scene {
         WindowGroup {
@@ -23,8 +31,10 @@ struct FlowApp: App {
                 haptics: haptics
             )
             .environment(engine)
+            .environment(demoManager)
             .environment(sessionManager)
             .environment(simulation)
+            .environment(realDetector)
             .environment(audio)
             .frame(minWidth: 680, minHeight: 780)
             .preferredColorScheme(.dark)
@@ -37,9 +47,12 @@ struct FlowApp: App {
     }
     
     private func setupApp() {
-        // Start simulation if not interacted
         if hasOnboarded {
-            simulation.startSimulation(engine: engine)
+            if demoManager.isDemoMode {
+                simulation.startSimulation(engine: engine)
+            } else {
+                realDetector.start(engine: engine)
+            }
         }
         
         // Try to set up menubar (optional — app works without it)
@@ -57,7 +70,9 @@ struct FlowApp: App {
 
 struct ContentView: View {
     @Environment(CognitiveLoadEngine.self) private var engine
+    @Environment(DemoManager.self) private var demoManager
     @Environment(SimulationManager.self) private var simulation
+    @Environment(RealEventDetector.self) private var realDetector
     
     @Binding var hasOnboarded: Bool
     @Binding var showFocusMode: Bool
@@ -70,8 +85,12 @@ struct ContentView: View {
                 OnboardingView(hasOnboarded: $hasOnboarded)
                     .transition(.opacity)
                     .onDisappear {
-                        // Start simulation after onboarding
-                        simulation.startSimulation(engine: engine)
+                        // Start simulation or real detection after onboarding
+                        if demoManager.isDemoMode {
+                            simulation.startSimulation(engine: engine)
+                        } else {
+                            realDetector.start(engine: engine)
+                        }
                     }
             } else if showFocusMode {
                 FocusModeView(haptics: haptics, isPresented: $showFocusMode)

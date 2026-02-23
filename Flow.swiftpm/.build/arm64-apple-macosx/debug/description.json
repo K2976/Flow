@@ -44,6 +44,10 @@
         },
         {
           "kind" : "file",
+          "name" : "/Users/kartik/Documents/WWDC26/Flow.swiftpm/DemoManager.swift"
+        },
+        {
+          "kind" : "file",
           "name" : "/Users/kartik/Documents/WWDC26/Flow.swiftpm/DesignSystem.swift"
         },
         {
@@ -77,6 +81,10 @@
         {
           "kind" : "file",
           "name" : "/Users/kartik/Documents/WWDC26/Flow.swiftpm/OnboardingView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/kartik/Documents/WWDC26/Flow.swiftpm/RealEventDetector.swift"
         },
         {
           "kind" : "file",
@@ -116,6 +124,7 @@
         "/Users/kartik/Documents/WWDC26/Flow.swiftpm/.build/arm64-apple-macosx/debug/Flow.build/CognitiveLoadEngine.swift.o",
         "/Users/kartik/Documents/WWDC26/Flow.swiftpm/.build/arm64-apple-macosx/debug/Flow.build/CognitiveLoadGraphView.swift.o",
         "/Users/kartik/Documents/WWDC26/Flow.swiftpm/.build/arm64-apple-macosx/debug/Flow.build/DashboardView.swift.o",
+        "/Users/kartik/Documents/WWDC26/Flow.swiftpm/.build/arm64-apple-macosx/debug/Flow.build/DemoManager.swift.o",
         "/Users/kartik/Documents/WWDC26/Flow.swiftpm/.build/arm64-apple-macosx/debug/Flow.build/DesignSystem.swift.o",
         "/Users/kartik/Documents/WWDC26/Flow.swiftpm/.build/arm64-apple-macosx/debug/Flow.build/FlowApp.swift.o",
         "/Users/kartik/Documents/WWDC26/Flow.swiftpm/.build/arm64-apple-macosx/debug/Flow.build/FocusModeView.swift.o",
@@ -125,6 +134,7 @@
         "/Users/kartik/Documents/WWDC26/Flow.swiftpm/.build/arm64-apple-macosx/debug/Flow.build/MenuBarManager.swift.o",
         "/Users/kartik/Documents/WWDC26/Flow.swiftpm/.build/arm64-apple-macosx/debug/Flow.build/MiniOrbView.swift.o",
         "/Users/kartik/Documents/WWDC26/Flow.swiftpm/.build/arm64-apple-macosx/debug/Flow.build/OnboardingView.swift.o",
+        "/Users/kartik/Documents/WWDC26/Flow.swiftpm/.build/arm64-apple-macosx/debug/Flow.build/RealEventDetector.swift.o",
         "/Users/kartik/Documents/WWDC26/Flow.swiftpm/.build/arm64-apple-macosx/debug/Flow.build/RecoveryView.swift.o",
         "/Users/kartik/Documents/WWDC26/Flow.swiftpm/.build/arm64-apple-macosx/debug/Flow.build/ScienceInsights.swift.o",
         "/Users/kartik/Documents/WWDC26/Flow.swiftpm/.build/arm64-apple-macosx/debug/Flow.build/SessionManager.swift.o",
@@ -199,6 +209,10 @@
         },
         {
           "kind" : "file",
+          "name" : "/Users/kartik/Documents/WWDC26/Flow.swiftpm/.build/arm64-apple-macosx/debug/Flow.build/DemoManager.swift.o"
+        },
+        {
+          "kind" : "file",
           "name" : "/Users/kartik/Documents/WWDC26/Flow.swiftpm/.build/arm64-apple-macosx/debug/Flow.build/DesignSystem.swift.o"
         },
         {
@@ -235,6 +249,10 @@
         },
         {
           "kind" : "file",
+          "name" : "/Users/kartik/Documents/WWDC26/Flow.swiftpm/.build/arm64-apple-macosx/debug/Flow.build/RealEventDetector.swift.o"
+        },
+        {
+          "kind" : "file",
           "name" : "/Users/kartik/Documents/WWDC26/Flow.swiftpm/.build/arm64-apple-macosx/debug/Flow.build/RecoveryView.swift.o"
         },
         {
@@ -265,6 +283,7 @@
         "/Users/kartik/Documents/WWDC26/Flow.swiftpm/CognitiveLoadEngine.swift",
         "/Users/kartik/Documents/WWDC26/Flow.swiftpm/CognitiveLoadGraphView.swift",
         "/Users/kartik/Documents/WWDC26/Flow.swiftpm/DashboardView.swift",
+        "/Users/kartik/Documents/WWDC26/Flow.swiftpm/DemoManager.swift",
         "/Users/kartik/Documents/WWDC26/Flow.swiftpm/DesignSystem.swift",
         "/Users/kartik/Documents/WWDC26/Flow.swiftpm/FlowApp.swift",
         "/Users/kartik/Documents/WWDC26/Flow.swiftpm/FocusModeView.swift",
@@ -274,6 +293,7 @@
         "/Users/kartik/Documents/WWDC26/Flow.swiftpm/MenuBarManager.swift",
         "/Users/kartik/Documents/WWDC26/Flow.swiftpm/MiniOrbView.swift",
         "/Users/kartik/Documents/WWDC26/Flow.swiftpm/OnboardingView.swift",
+        "/Users/kartik/Documents/WWDC26/Flow.swiftpm/RealEventDetector.swift",
         "/Users/kartik/Documents/WWDC26/Flow.swiftpm/RecoveryView.swift",
         "/Users/kartik/Documents/WWDC26/Flow.swiftpm/ScienceInsights.swift",
         "/Users/kartik/Documents/WWDC26/Flow.swiftpm/SessionManager.swift",
@@ -300,6 +320,7 @@
       "/Users/kartik/Documents/WWDC26/Flow.swiftpm/CognitiveLoadEngine.swift",
       "/Users/kartik/Documents/WWDC26/Flow.swiftpm/CognitiveLoadGraphView.swift",
       "/Users/kartik/Documents/WWDC26/Flow.swiftpm/DashboardView.swift",
+      "/Users/kartik/Documents/WWDC26/Flow.swiftpm/DemoManager.swift",
       "/Users/kartik/Documents/WWDC26/Flow.swiftpm/DesignSystem.swift",
       "/Users/kartik/Documents/WWDC26/Flow.swiftpm/FlowApp.swift",
       "/Users/kartik/Documents/WWDC26/Flow.swiftpm/FocusModeView.swift",
@@ -309,6 +330,7 @@
       "/Users/kartik/Documents/WWDC26/Flow.swiftpm/MenuBarManager.swift",
       "/Users/kartik/Documents/WWDC26/Flow.swiftpm/MiniOrbView.swift",
       "/Users/kartik/Documents/WWDC26/Flow.swiftpm/OnboardingView.swift",
+      "/Users/kartik/Documents/WWDC26/Flow.swiftpm/RealEventDetector.swift",
       "/Users/kartik/Documents/WWDC26/Flow.swiftpm/RecoveryView.swift",
       "/Users/kartik/Documents/WWDC26/Flow.swiftpm/ScienceInsights.swift",
       "/Users/kartik/Documents/WWDC26/Flow.swiftpm/SessionManager.swift",
@@ -422,6 +444,10 @@
         },
         {
           "kind" : "file",
+          "name" : "/Users/kartik/Documents/WWDC26/Flow.swiftpm/DemoManager.swift"
+        },
+        {
+          "kind" : "file",
           "name" : "/Users/kartik/Documents/WWDC26/Flow.swiftpm/DesignSystem.swift"
         },
         {
@@ -455,6 +481,10 @@
         {
           "kind" : "file",
           "name" : "/Users/kartik/Documents/WWDC26/Flow.swiftpm/OnboardingView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/kartik/Documents/WWDC26/Flow.swiftpm/RealEventDetector.swift"
         },
         {
           "kind" : "file",
@@ -508,6 +538,10 @@
         },
         {
           "kind" : "file",
+          "name" : "/Users/kartik/Documents/WWDC26/Flow.swiftpm/.build/arm64-apple-macosx/debug/Flow.build/DemoManager.swift.o"
+        },
+        {
+          "kind" : "file",
           "name" : "/Users/kartik/Documents/WWDC26/Flow.swiftpm/.build/arm64-apple-macosx/debug/Flow.build/DesignSystem.swift.o"
         },
         {
@@ -541,6 +575,10 @@
         {
           "kind" : "file",
           "name" : "/Users/kartik/Documents/WWDC26/Flow.swiftpm/.build/arm64-apple-macosx/debug/Flow.build/OnboardingView.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/kartik/Documents/WWDC26/Flow.swiftpm/.build/arm64-apple-macosx/debug/Flow.build/RealEventDetector.swift.o"
         },
         {
           "kind" : "file",

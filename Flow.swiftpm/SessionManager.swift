@@ -17,8 +17,19 @@ final class SessionManager {
     // 7-day history
     private(set) var weekHistory: [DaySummary] = []
     
-    init() {
-        generateMockHistory()
+    init(isDemoMode: Bool = true) {
+        if isDemoMode {
+            generateMockHistory()
+        }
+    }
+    
+    /// Toggle demo mode at runtime — regenerates or clears mock history
+    func setDemoMode(_ enabled: Bool) {
+        if enabled {
+            generateMockHistory()
+        } else {
+            weekHistory.removeAll()
+        }
     }
     
     func startNewSession(engine: CognitiveLoadEngine) {

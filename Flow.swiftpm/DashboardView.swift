@@ -4,8 +4,10 @@ import SwiftUI
 
 struct DashboardView: View {
     @Environment(CognitiveLoadEngine.self) private var engine
+    @Environment(DemoManager.self) private var demoManager
     @Environment(SessionManager.self) private var sessionManager
     @Environment(SimulationManager.self) private var simulation
+    @Environment(RealEventDetector.self) private var realDetector
     @Environment(AudioManager.self) private var audio
     
     let haptics: HapticsManager
@@ -115,6 +117,45 @@ struct DashboardView: View {
             
             Spacer()
             
+            // Demo Mode Toggle
+            Button {
+                withAnimation(FlowAnimation.viewTransition) {
+                    demoManager.isDemoMode.toggle()
+                    sessionManager.setDemoMode(demoManager.isDemoMode)
+                    
+                    if demoManager.isDemoMode {
+                        // Switch to demo: stop real detection, start simulation
+                        realDetector.stop()
+                        simulation.userHasInteracted = false
+                        simulation.startSimulation(engine: engine)
+                    } else {
+                        // Switch to normal: stop simulation, start real detection
+                        simulation.stopSimulation()
+                        realDetector.start(engine: engine)
+                    }
+                }
+            } label: {
+                Text("DEMO")
+                    .font(.system(size: 10, weight: .bold, design: .rounded))
+                    .tracking(0.5)
+                    .foregroundStyle(demoManager.isDemoMode ? .white : .white.opacity(0.35))
+                    .padding(.horizontal, 10)
+                    .padding(.vertical, 6)
+                    .background(
+                        Capsule()
+                            .fill(demoManager.isDemoMode ?
+                                  FlowColors.color(for: 60).opacity(0.4) :
+                                  .white.opacity(0.04))
+                    )
+                    .overlay(
+                        Capsule()
+                            .stroke(demoManager.isDemoMode ?
+                                    FlowColors.color(for: 60).opacity(0.5) :
+                                    .white.opacity(0.08), lineWidth: 0.5)
+                    )
+            }
+            .buttonStyle(.plain)
+            
             // Mute Toggle
             Button {
                 audio.isMuted.toggle()
@@ -207,7 +248,7 @@ struct DashboardView: View {
                 .tracking(1.5)
             
             HStack(spacing: 12) {
-                ForEach(AttentionEvent.allCases) { event in
+                ForEach(AttentionEvent.allCases.filter(\.isManual)) { event in
                     eventButton(event)
                 }
             }
