@@ -102,7 +102,7 @@ struct CognitiveLoadGraphView: View {
             }
             .chartXAxis {
                 AxisMarks(values: .automatic(desiredCount: 5)) { _ in
-                    AxisValueLabel(format: .dateTime.minute().second())
+                    AxisValueLabel(format: .dateTime.hour(.defaultDigits(amPM: .omitted)).minute(.twoDigits))
                         .font(FlowTypography.captionFont(size: 9))
                         .foregroundStyle(.white.opacity(0.3))
                     AxisGridLine()
