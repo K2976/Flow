@@ -14,7 +14,6 @@ struct DashboardView: View {
     
     @State private var showRecovery = false
     @State private var currentTip = ScienceInsights.randomInsight()
-    @State private var orbPulseAmount: CGFloat = 1.0
     @State private var currentTime = Date()
     @State private var showDetails = false
     
@@ -189,23 +188,26 @@ struct DashboardView: View {
     // MARK: - Orb Section (Centered, Dominant)
     
     private var orbSection: some View {
-        VStack(spacing: 20) {
-            // Large centered orb — ~40% of screen height
-            FocusOrbView(score: engine.animatedScore, size: 360)
-                .scaleEffect(orbPulseAmount)
-            
-            // State label — small, quiet, descriptive
-            Text(engine.state.label)
-                .font(FlowTypography.captionFont(size: 14))
-                .foregroundStyle(.white.opacity(0.3))
-                .animation(.easeInOut(duration: 1.5), value: engine.state)
-            
-            // Contextual line — very low contrast
-            Text(engine.state.contextualLine)
-                .font(FlowTypography.bodyFont(size: 12))
-                .foregroundStyle(.white.opacity(0.18))
-                .transition(.opacity)
-                .animation(.easeInOut(duration: 1.5), value: engine.state)
+        GeometryReader { geo in
+            let orbSize = min(max(geo.size.height * 0.55, 200), 600)
+            VStack(spacing: 20) {
+                // Large centered orb — scales with window height
+                FocusOrbView(score: engine.animatedScore, size: orbSize)
+                
+                // State label — small, quiet, descriptive
+                Text(engine.state.label)
+                    .font(FlowTypography.captionFont(size: 14))
+                    .foregroundStyle(.white.opacity(0.3))
+                    .animation(.easeInOut(duration: 1.5), value: engine.state)
+                
+                // Contextual line — very low contrast
+                Text(engine.state.contextualLine)
+                    .font(FlowTypography.bodyFont(size: 12))
+                    .foregroundStyle(.white.opacity(0.18))
+                    .transition(.opacity)
+                    .animation(.easeInOut(duration: 1.5), value: engine.state)
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
     }
     
@@ -389,13 +391,6 @@ struct DashboardView: View {
         engine.logEvent(event)
         haptics.playEventFeedback()
         audio.playEventChime()
-        
-        withAnimation(.easeOut(duration: 0.15)) {
-            orbPulseAmount = 1.08
-        }
-        withAnimation(.easeInOut(duration: 0.4).delay(0.15)) {
-            orbPulseAmount = 1.0
-        }
     }
     
     // MARK: - macOS Focus Mode

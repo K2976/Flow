@@ -23,6 +23,7 @@ let package = Package(
                 "HapticsManager.swift",
                 "ScienceInsights.swift",
                 "FocusOrbView.swift",
+                "GlobeView.swift",
                 "MiniOrbView.swift",
                 "OnboardingView.swift",
                 "DashboardView.swift",

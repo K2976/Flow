@@ -135,34 +135,48 @@ struct FlowColors {
 // MARK: - Ambient Background
 
 struct AmbientBackground: View {
+
+    // Fixed star positions computed once (seed-based LCG — no random per render)
+    private static let stars: [(x: CGFloat, y: CGFloat, r: CGFloat, a: CGFloat)] = {
+        var seed: UInt64 = 0xDEADBEEF_CAFEBABE
+        func rand() -> CGFloat {
+            seed = seed &* 6364136223846793005 &+ 1442695040888963407
+            return CGFloat(seed >> 33) / CGFloat(Int32.max)
+        }
+        return (0..<320).map { _ in
+            (rand(), rand(), 0.6 + rand() * 1.8, 0.15 + rand() * 0.65)
+        }
+    }()
+
     var body: some View {
-        ZStack {
-            // Deep near-black gradient
-            LinearGradient(
-                colors: [
-                    Color(hue: 0.62, saturation: 0.15, brightness: 0.06),
-                    Color(hue: 0.60, saturation: 0.10, brightness: 0.03),
-                    Color(hue: 0.58, saturation: 0.08, brightness: 0.02)
-                ],
-                startPoint: .top,
-                endPoint: .bottom
-            )
-            
-            // Subtle radial vignette toward edges
-            RadialGradient(
-                colors: [
-                    .clear,
-                    .black.opacity(0.3),
-                    .black.opacity(0.6)
-                ],
-                center: .center,
-                startRadius: 100,
-                endRadius: 500
-            )
+        GeometryReader { geo in
+            ZStack {
+                // Deep space base
+                Color(hue: 0.62, saturation: 0.12, brightness: 0.04)
+
+                // Star field — static, very low contrast
+                Canvas { ctx, size in
+                    for star in Self.stars {
+                        let pt = CGPoint(x: star.x * size.width, y: star.y * size.height)
+                        let path = Path(ellipseIn: CGRect(x: pt.x, y: pt.y,
+                                                          width: star.r, height: star.r))
+                        ctx.fill(path, with: .color(.white.opacity(star.a * 0.55)))
+                    }
+                }
+
+                // Radial vignette toward edges
+                RadialGradient(
+                    colors: [.clear, .black.opacity(0.45), .black.opacity(0.75)],
+                    center: .center,
+                    startRadius: min(geo.size.width, geo.size.height) * 0.28,
+                    endRadius:   max(geo.size.width, geo.size.height) * 0.72
+                )
+            }
         }
         .ignoresSafeArea()
     }
 }
+
 
 // MARK: - Typography
 
