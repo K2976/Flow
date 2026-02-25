@@ -113,16 +113,18 @@ struct TypingModeView: View {
     // MARK: - Typing Area
     private var typingArea: some View {
         ZStack {
-            // Invisible text field to capture input robustly
+            // Invisible text field taking up the whole area to ensure focus captures hardware and software keyboards
             TextField("", text: $engine.currentInput)
-                .focused($isFocused)
-                // Disable autocorrect and autocapitalization to prevent assistance
+                .font(.system(size: 32))
+                .foregroundColor(.clear)
+                .tint(.clear)
                 .autocorrectionDisabled()
                 #if os(iOS)
                 .textInputAutocapitalization(.never)
                 #endif
-                .opacity(0)
-                .frame(width: 0, height: 0)
+                .focused($isFocused)
+                // Using opacity(0.01) instead of 0 prevents SwiftUI from completely ignoring it for interactions in some OS versions
+                .opacity(0.01)
             
             // Render the words using a flowed text approach
             // We only render window of words around current index to handle long modes
@@ -186,6 +188,11 @@ struct TypingModeView: View {
                 .animation(.easeInOut(duration: 0.1), value: engine.currentInput)
                 .animation(.easeInOut(duration: 0.3), value: engine.currentWordIndex)
             }
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .contentShape(Rectangle()) // Make entire area clickable to focus
+        .onChange(of: engine.currentInput) { _, _ in
+            engine.processInput()
         }
         // Force focus when tapped
         .onTapGesture {

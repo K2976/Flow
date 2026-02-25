@@ -34,11 +34,7 @@ final class TypingEngine {
     
     var words: [WordToken] = []
     var currentWordIndex = 0
-    var currentInput: String = "" {
-        didSet {
-            processInput()
-        }
-    }
+    var currentInput: String = ""
     
     var timeRemaining: Int = 0
     var timeElapsed: TimeInterval = 0
@@ -104,7 +100,7 @@ final class TypingEngine {
         }
     }
     
-    private func processInput() {
+    func processInput() {
         if state == .finished { return }
         
         if state == .idle && !currentInput.isEmpty {
