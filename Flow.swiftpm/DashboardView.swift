@@ -152,6 +152,7 @@ struct DashboardView: View {
                     )
             }
             .buttonStyle(.plain)
+            .focusable(false)
             
             // Mute Toggle
             Button {
@@ -176,6 +177,7 @@ struct DashboardView: View {
                     )
             }
             .buttonStyle(.plain)
+            .focusable(false)
             
             // Focus Mode Toggle
             Button {
@@ -207,6 +209,7 @@ struct DashboardView: View {
                 )
             }
             .buttonStyle(.plain)
+            .focusable(false)
             .keyboardShortcut("f", modifiers: .command)
         }
         .padding(.horizontal, 24)
@@ -250,6 +253,7 @@ struct DashboardView: View {
                     )
             }
             .buttonStyle(.plain)
+            .focusable(false)
             
             Spacer()
             
@@ -273,6 +277,7 @@ struct DashboardView: View {
                     )
             }
             .buttonStyle(.plain)
+            .focusable(false)
         }
     }
     
@@ -333,6 +338,7 @@ struct DashboardView: View {
                     .padding(.horizontal, 24)
                 }
                 .buttonStyle(.plain)
+            .focusable(false)
                 .padding(.bottom, 16)
             }
             .background(

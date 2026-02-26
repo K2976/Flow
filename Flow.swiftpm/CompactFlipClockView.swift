@@ -25,13 +25,13 @@ struct CompactFlipClockView: View {
             }
             
             Text(":")
-                .font(.system(size: 20, weight: .bold, design: .monospaced))
+                .font(.system(size: 48, weight: .bold, design: .monospaced)) // Scale up the colon as well
                 .foregroundColor(.white)
                 .opacity(0.45) // Static colon slightly dimmer
-                .offset(y: -1)
+                .offset(y: -4) // Adjusted offset for new height
             
             // Minutes
-            HStack(spacing: 2) {
+            HStack(spacing: 4) {
                 FlipDigit(value: minutes / 10)
                 FlipDigit(value: minutes % 10)
             }
@@ -110,23 +110,23 @@ struct HalfDigit: View {
     let value: Int
     let isTop: Bool
     
-    // Adjusted sizes for perfect compact flip clock style
-    let width: CGFloat = 16
-    let fullHeight: CGFloat = 26
-    let halfHeight: CGFloat = 13
+    // Significantly larger sizes to almost match the score size of 64
+    let width: CGFloat = 46
+    let fullHeight: CGFloat = 72
+    let halfHeight: CGFloat = 36
     
     var body: some View {
         ZStack {
             Color(white: 0.08).opacity(0.8) // Transparent near-black background
             
             Text("\(value)")
-                .font(.system(size: 20, weight: .bold, design: .monospaced))
+                .font(.system(size: 56, weight: .bold, design: .monospaced))
                 .foregroundColor(.white)
                 .frame(width: width, height: fullHeight)
                 .offset(y: isTop ? halfHeight/2 : -halfHeight/2)
         }
         .frame(width: width, height: halfHeight)
         .clipped()
-        .cornerRadius(1.5)
+        .cornerRadius(4.0)
     }
 }
