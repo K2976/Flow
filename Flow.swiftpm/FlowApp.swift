@@ -42,8 +42,10 @@ struct FlowApp: App {
                 setupApp()
             }
         }
+        #if os(macOS)
         .windowStyle(.hiddenTitleBar)
         .defaultSize(width: 720, height: 820)
+        #endif
     }
     
     private func setupApp() {

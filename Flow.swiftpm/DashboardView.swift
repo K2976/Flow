@@ -105,29 +105,21 @@ struct DashboardView: View {
     // MARK: - Header (Minimal, Transparent)
     
     private var headerSection: some View {
-        HStack {
-            CompactFlipClockView(date: currentTime)
+        ZStack {
+            // Score Meter (Big, Centered)
+            Text("\(Int(engine.animatedScore))")
+                .font(FlowTypography.headingFont(size: 64))
+                .foregroundStyle(.white.opacity(0.85))
+                .contentTransition(.numericText())
+                .animation(.spring(response: 0.3, dampingFraction: 0.7), value: Int(engine.animatedScore))
             
-            Spacer()
-            
-            // Score Meter (Big, Top Center-Right)
-            HStack(alignment: .firstTextBaseline, spacing: 8) {
-                Text("\(Int(engine.animatedScore))")
-                    .font(FlowTypography.headingFont(size: 64))
-                    .foregroundStyle(.white.opacity(0.85))
-                    .contentTransition(.numericText())
-                    .animation(.spring(response: 0.3, dampingFraction: 0.7), value: Int(engine.animatedScore))
+            HStack {
+                CompactFlipClockView(date: currentTime)
                 
-                Text("cognitive load")
-                    .font(FlowTypography.labelFont(size: 18))
-                    .foregroundStyle(.white.opacity(0.35))
-            }
-            .padding(.trailing, 24)
-            
-            Spacer()
-            
-            // Demo Mode Toggle
-            Button {
+                Spacer()
+                
+                // Demo Mode Toggle
+                Button {
                 withAnimation(FlowAnimation.viewTransition) {
                     demoManager.isDemoMode.toggle()
                     sessionManager.setDemoMode(demoManager.isDemoMode)
@@ -211,6 +203,8 @@ struct DashboardView: View {
             .buttonStyle(.plain)
             .keyboardShortcut("f", modifiers: .command)
         }
+        .padding(.horizontal, 24)
+        }
     }
     
     // MARK: - Orb Section (Centered, Dominant)
@@ -224,7 +218,7 @@ struct DashboardView: View {
         HStack {
             // Session timer
             Text(sessionManager.formattedDuration)
-                .font(FlowTypography.captionFont(size: 15))
+                .font(.system(size: 13, weight: .semibold, design: .rounded))
                 .foregroundStyle(.white.opacity(0.6))
                 .monospacedDigit()
             
@@ -237,16 +231,16 @@ struct DashboardView: View {
                 }
             } label: {
                 Image(systemName: showDetails ? "chevron.down" : "chevron.up")
-                    .font(.system(size: 14, weight: .bold))
-                    .foregroundStyle(.white.opacity(0.8))
-                    .frame(width: 44, height: 44)
+                    .font(.system(size: 12, weight: .bold))
+                    .foregroundStyle(.white.opacity(0.6))
+                    .frame(width: 32, height: 32)
                     .background(
                         Circle()
-                            .fill(.white.opacity(0.1))
+                            .fill(.white.opacity(0.08))
                     )
                     .overlay(
                         Circle()
-                            .stroke(.white.opacity(0.2), lineWidth: 1)
+                            .stroke(.white.opacity(0.06), lineWidth: 0.5)
                     )
             }
             .buttonStyle(.plain)
@@ -260,15 +254,16 @@ struct DashboardView: View {
                 haptics.playCompletionHaptic()
             } label: {
                 Text("End")
-                    .font(FlowTypography.captionFont(size: 15))
-                    .foregroundStyle(.white.opacity(0.8))
-                    .padding(.horizontal, 20)
-                    .padding(.vertical, 10)
+                    .font(.system(size: 13, weight: .bold, design: .rounded))
+                    .tracking(0.6)
+                    .foregroundStyle(.white.opacity(0.6))
+                    .padding(.horizontal, 14)
+                    .padding(.vertical, 8)
                     .background(
-                        Capsule().fill(.white.opacity(0.1))
+                        Capsule().fill(.white.opacity(0.08))
                     )
                     .overlay(
-                        Capsule().stroke(.white.opacity(0.2), lineWidth: 1)
+                        Capsule().stroke(.white.opacity(0.06), lineWidth: 0.5)
                     )
             }
             .buttonStyle(.plain)
