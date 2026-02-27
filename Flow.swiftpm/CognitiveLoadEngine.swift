@@ -113,6 +113,7 @@ final class CognitiveLoadEngine {
     func buildSessionRecord() -> SessionRecord {
         let avg = scoreHistory.isEmpty ? score : scoreHistory.reduce(0, +) / Double(scoreHistory.count)
         let peak = scoreHistory.max() ?? score
+        let wallClockDuration = Date().timeIntervalSince(sessionStartTime)
         return SessionRecord(
             startTime: sessionStartTime,
             endTime: DemoManager.sharedCurrentDate,
@@ -121,7 +122,8 @@ final class CognitiveLoadEngine {
             averageScore: avg,
             peakScore: peak,
             eventCount: events.count,
-            events: events
+            events: events,
+            realDuration: wallClockDuration
         )
     }
     

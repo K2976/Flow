@@ -91,4 +91,5 @@ struct SessionRecord: Identifiable {
     let peakScore: Double
     let eventCount: Int
     let events: [AttentionEventRecord]
+    var realDuration: TimeInterval? = nil  // Wall-clock duration (fixes demo mode)
 }

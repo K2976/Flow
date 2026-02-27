@@ -291,7 +291,7 @@ struct SessionSummaryView: View {
     }
     
     private var formattedDuration: String {
-        let duration = session.endTime.timeIntervalSince(session.startTime)
+        let duration = session.realDuration ?? session.endTime.timeIntervalSince(session.startTime)
         let minutes = Int(duration) / 60
         let seconds = Int(duration) % 60
         return "\(minutes)m \(seconds)s"
