@@ -305,28 +305,16 @@ struct DashboardView: View {
                 }
             }
         } label: {
-            ZStack {
-                // Sliding highlight behind active icon
-                HStack {
-                    if !audio.isMuted { Spacer() }
-                    RoundedRectangle(cornerRadius: 6, style: .continuous)
-                        .fill(.white.opacity(0.10))
-                        .frame(width: 28, height: 20)
-                    if audio.isMuted { Spacer() }
-                }
+            HStack(spacing: 6) {
+                Image(systemName: audio.isMuted ? "speaker.slash.fill" : "speaker.wave.2.fill")
+                    .font(.system(size: 14))
+                    .contentTransition(.symbolEffect(.replace))
                 
-                // Two icons side by side
-                HStack(spacing: 10) {
-                    Image(systemName: "speaker.slash.fill")
-                        .font(.system(size: 11))
-                        .foregroundStyle(.white.opacity(audio.isMuted ? 0.7 : 0.25))
-                    
-                    Image(systemName: "speaker.wave.2.fill")
-                        .font(.system(size: 11))
-                        .foregroundStyle(.white.opacity(audio.isMuted ? 0.25 : 0.7))
-                }
+                Text(audio.isMuted ? "OFF" : "ON")
+                    .font(.system(size: 11, weight: .bold, design: .rounded))
+                    .tracking(0.4)
             }
-            .frame(width: 56)
+            .foregroundStyle(.white.opacity(audio.isMuted ? 0.35 : 0.6))
             .animation(.easeOut(duration: 0.25), value: audio.isMuted)
         }
         .buttonStyle(.plain)

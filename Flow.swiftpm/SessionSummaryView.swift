@@ -31,7 +31,8 @@ struct SessionSummaryView: View {
                 .ignoresSafeArea()
             
             // Card
-            VStack(spacing: 24) {
+            ZStack(alignment: .topTrailing) {
+                VStack(spacing: 24) {
                 // Header
                 VStack(spacing: 8) {
                     Image(systemName: "checkmark.circle.fill")
@@ -189,6 +190,30 @@ struct SessionSummaryView: View {
                         .buttonStyle(.plain)
                     }
                 }
+                }
+                
+                // Close button
+                Button {
+                    withAnimation(.easeOut(duration: 0.3)) {
+                        sessionManager.dismissSummary()
+                    }
+                } label: {
+                    Image(systemName: "xmark")
+                        .font(.system(size: 12, weight: .bold))
+                        .foregroundStyle(.white.opacity(0.5))
+                        .frame(width: 28, height: 28)
+                        .background(
+                            Circle()
+                                .fill(.white.opacity(0.08))
+                        )
+                        .overlay(
+                            Circle()
+                                .stroke(.white.opacity(0.06), lineWidth: 0.5)
+                        )
+                }
+                .buttonStyle(.plain)
+                .focusable(false)
+                .padding(8)
             }
             .padding(32)
             .frame(width: 380)
