@@ -16,6 +16,7 @@ struct DashboardView: View {
     @State private var currentTip = ScienceInsights.randomInsight()
     @State private var currentTime = Date()
     @State private var showDetails = false
+    @State private var showDNDLoading = false
     
     private let clockTimer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
     
@@ -90,7 +91,15 @@ struct DashboardView: View {
             if sessionManager.showingSummary, let session = sessionManager.lastSession {
                 SessionSummaryView(session: session)
             }
+            
+            // DND loading overlay
+            if showDNDLoading {
+                ColdLoadingView(isPresented: $showDNDLoading)
+                    .transition(.opacity)
+                    .zIndex(200)
+            }
         }
+        .animation(.easeOut(duration: 0.3), value: showDNDLoading)
         .onReceive(clockTimer) { _ in
             currentTime = demoManager.currentDate
         }
@@ -175,10 +184,16 @@ struct DashboardView: View {
                 HStack(spacing: 10) {
                     // Focus Mode (DND) Toggle
                     Button {
-                        withAnimation(FlowAnimation.viewTransition) {
-                            engine.isFocusMode.toggle()
-                            audio.setFocusMode(engine.isFocusMode)
-                            toggleMacOSFocus(engine.isFocusMode)
+                        showDNDLoading = true
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 2.5) {
+                            withAnimation(FlowAnimation.viewTransition) {
+                                engine.isFocusMode.toggle()
+                                audio.setFocusMode(engine.isFocusMode)
+                                toggleMacOSFocus(engine.isFocusMode)
+                            }
+                            withAnimation(.easeOut(duration: 0.5)) {
+                                showDNDLoading = false
+                            }
                         }
                     } label: {
                         HStack(spacing: 6) {

@@ -34,7 +34,8 @@ let package = Package(
                 "SessionSummaryView.swift",
                 "HistoryStripView.swift",
                 "MenuBarManager.swift",
-                "CompactFlipClockView.swift"
+                "CompactFlipClockView.swift",
+                "ColdLoadingView.swift"
             ]
         )
     ]

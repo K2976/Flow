@@ -81,6 +81,8 @@ struct ContentView: View {
     
     let haptics: HapticsManager
     
+    @State private var showLaunchScreen = true
+    
     var body: some View {
         ZStack {
             if !hasOnboarded {
@@ -101,9 +103,25 @@ struct ContentView: View {
                 DashboardView(haptics: haptics)
                     .transition(.opacity)
             }
+            
+            // Launch loading screen overlay
+            if showLaunchScreen && hasOnboarded {
+                ColdLoadingView(isPresented: $showLaunchScreen)
+                    .transition(.opacity)
+                    .zIndex(100)
+                    .onAppear {
+                        // Auto-dismiss after animation completes
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 2.5) {
+                            withAnimation(.easeOut(duration: 0.5)) {
+                                showLaunchScreen = false
+                            }
+                        }
+                    }
+            }
         }
         .animation(FlowAnimation.viewTransition, value: hasOnboarded)
         .animation(FlowAnimation.viewTransition, value: showFocusMode)
+        .animation(.easeOut(duration: 0.5), value: showLaunchScreen)
         // Keyboard shortcuts (local only — sandbox safe)
         .background {
             // Hidden buttons for keyboard shortcuts

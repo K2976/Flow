@@ -11,6 +11,8 @@ struct SessionSummaryView: View {
     @State private var appeared = false
     @State private var showNamePicker = false
     @State private var selectedName: String = ""
+    @State private var showColdLoading = false
+    @State private var pendingAction: (() -> Void)? = nil
     
     private let presetNames = [
         "Deep Work",
@@ -31,7 +33,7 @@ struct SessionSummaryView: View {
                 .ignoresSafeArea()
             
             // Card
-            ZStack(alignment: .topTrailing) {
+            ZStack(alignment: .topLeading) {
                 VStack(spacing: 24) {
                 // Header
                 VStack(spacing: 8) {
@@ -125,7 +127,10 @@ struct SessionSummaryView: View {
                         
                         // Confirm button
                         Button {
-                            sessionManager.saveSession(name: selectedName, engine: engine)
+                            let name = selectedName
+                            triggerLoadingTransition {
+                                sessionManager.saveSession(name: name, engine: engine)
+                            }
                         } label: {
                             Text("Save as \"\(selectedName)\"")
                                 .font(FlowTypography.bodyFont(size: 13))
@@ -170,8 +175,10 @@ struct SessionSummaryView: View {
                         .buttonStyle(.plain)
                         
                         Button {
-                            sessionManager.dismissSummary()
-                            sessionManager.startNewSession(engine: engine)
+                            triggerLoadingTransition {
+                                sessionManager.dismissSummary()
+                                sessionManager.startNewSession(engine: engine)
+                            }
                         } label: {
                             Text("New Session")
                                 .font(FlowTypography.bodyFont(size: 14))
@@ -233,6 +240,33 @@ struct SessionSummaryView: View {
                 withAnimation(.spring(response: 0.5, dampingFraction: 0.8)) {
                     appeared = true
                 }
+            }
+            
+            // Cinematic loading overlay for transitions
+            if showColdLoading {
+                ColdLoadingView(isPresented: $showColdLoading)
+                    .transition(.opacity)
+                    .zIndex(200)
+            }
+        }
+        .animation(.easeOut(duration: 0.3), value: showColdLoading)
+        .onChange(of: showColdLoading) { _, newValue in
+            if !newValue, let action = pendingAction {
+                action()
+                pendingAction = nil
+            }
+        }
+    }
+    
+    private func triggerLoadingTransition(action: @escaping () -> Void) {
+        pendingAction = action
+        withAnimation(.easeOut(duration: 0.3)) {
+            showColdLoading = true
+        }
+        // Dismiss after animation plays
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2.5) {
+            withAnimation(.easeOut(duration: 0.5)) {
+                showColdLoading = false
             }
         }
     }
