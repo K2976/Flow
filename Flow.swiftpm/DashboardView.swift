@@ -319,17 +319,13 @@ struct DashboardView: View {
                         Text("END")
                             .font(.system(size: 13, weight: .bold, design: .rounded))
                             .tracking(0.6)
-                            .foregroundStyle(.white.opacity(0.5))
+                            .foregroundStyle(.white.opacity(0.9))
                             .frame(height: 20)
                             .padding(.horizontal, 14)
                             .padding(.vertical, 8)
                             .background(
                                 RoundedRectangle(cornerRadius: 12, style: .continuous)
-                                    .fill(.white.opacity(0.06))
-                            )
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 12, style: .continuous)
-                                    .stroke(.white.opacity(0.04), lineWidth: 0.5)
+                                    .fill(Color(red: 0.7, green: 0.15, blue: 0.15).opacity(0.75))
                             )
                     }
                     .buttonStyle(.plain)
