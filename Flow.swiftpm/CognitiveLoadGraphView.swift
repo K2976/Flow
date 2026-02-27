@@ -29,9 +29,12 @@ struct CognitiveLoadGraphView: View {
                     .foregroundStyle(
                         .linearGradient(
                             colors: [
-                                FlowColors.color(for: 30),
-                                FlowColors.color(for: 60),
-                                FlowColors.color(for: 90)
+                                FlowColors.color(for: 0),
+                                FlowColors.color(for: 25),
+                                FlowColors.color(for: 50),
+                                FlowColors.color(for: 70),
+                                FlowColors.color(for: 85),
+                                FlowColors.color(for: 100)
                             ],
                             startPoint: .bottom,
                             endPoint: .top
