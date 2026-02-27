@@ -106,9 +106,6 @@ struct DashboardView: View {
             currentTime = demoManager.currentDate
         }
         .onChange(of: engine.score) { _, newScore in
-            if newScore > 85 && !showRecovery && !engine.isFocusMode {
-                showRecovery = true
-            }
             audio.updateForScore(newScore)
         }
         .onAppear {
@@ -246,6 +243,34 @@ struct DashboardView: View {
                                 .stroke(.white.opacity(0.04), lineWidth: 0.5)
                         )
                 }
+                
+                    // Reset button
+                    Button {
+                        showRecovery = true
+                    } label: {
+                        HStack(spacing: 6) {
+                            Image(systemName: "arrow.counterclockwise")
+                                .font(.system(size: 12))
+                            Text("RESET")
+                                .font(.system(size: 13, weight: .bold, design: .rounded))
+                                .tracking(0.6)
+                        }
+                        .foregroundStyle(.white.opacity(0.5))
+                        .frame(height: 20)
+                        .padding(.horizontal, 14)
+                        .padding(.vertical, 8)
+                        .background(
+                            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                                .fill(.orange.opacity(0.12))
+                        )
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                                .stroke(.orange.opacity(0.08), lineWidth: 0.5)
+                        )
+                    }
+                    .buttonStyle(.plain)
+                    .focusable(false)
+                
                 Spacer()
             }
             
