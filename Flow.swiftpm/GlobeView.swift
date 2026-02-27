@@ -91,7 +91,7 @@ final class GlobePlanetView: SCNView {
 
     func updateScore(_ score: Double) {
         // Only regenerate texture when the score changes meaningfully (>2 points)
-        guard abs(score - lastAppliedScore) > 2.0 else { return }
+        guard abs(score - lastAppliedScore) > 1.0 else { return }
         lastAppliedScore = score
         planetMaterial?.diffuse.contents = Self.checkerTexture(score: score)
     }

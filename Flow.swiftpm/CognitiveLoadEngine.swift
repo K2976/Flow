@@ -179,7 +179,7 @@ final class CognitiveLoadEngine {
                 animatedScore = score
             }
         } else {
-            animatedScore += diff * 0.15
+            animatedScore += diff * 0.35
         }
     }
 }
