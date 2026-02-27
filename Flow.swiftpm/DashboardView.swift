@@ -250,13 +250,13 @@ struct DashboardView: View {
                                 .font(.system(size: 13, weight: .bold, design: .rounded))
                                 .tracking(0.6)
                         }
-                        .foregroundStyle(engine.isFocusMode ? .white.opacity(0.85) : .white.opacity(0.35))
+                        .foregroundStyle(engine.isFocusMode ? .white.opacity(0.9) : .white.opacity(0.2))
                         .frame(height: 20)
                         .padding(.horizontal, 14)
                         .padding(.vertical, 8)
                         .background(
                             RoundedRectangle(cornerRadius: 12, style: .continuous)
-                                .fill(.white.opacity(0.06))
+                                .fill(.white.opacity(engine.isFocusMode ? 0.1 : 0.04))
                         )
                         .overlay(
                             RoundedRectangle(cornerRadius: 12, style: .continuous)
@@ -268,19 +268,19 @@ struct DashboardView: View {
                     .focusable(false)
                     .keyboardShortcut("f", modifiers: .command)
                     
-                    // Sliding sound toggle
                     soundToggle
                         .frame(height: 20)
                         .padding(.horizontal, 14)
                         .padding(.vertical, 8)
                         .background(
                             RoundedRectangle(cornerRadius: 12, style: .continuous)
-                                .fill(.white.opacity(0.06))
+                                .fill(.white.opacity(audio.isMuted ? 0.04 : 0.1))
                         )
                         .overlay(
                             RoundedRectangle(cornerRadius: 12, style: .continuous)
                                 .stroke(.white.opacity(0.04), lineWidth: 0.5)
                         )
+                        .animation(.easeOut(duration: 0.25), value: audio.isMuted)
                 }
                 
                     // Reset button
@@ -421,7 +421,7 @@ struct DashboardView: View {
                     .font(.system(size: 11, weight: .bold, design: .rounded))
                     .tracking(0.4)
             }
-            .foregroundStyle(.white.opacity(audio.isMuted ? 0.35 : 0.6))
+            .foregroundStyle(.white.opacity(audio.isMuted ? 0.2 : 0.8))
             .animation(.easeOut(duration: 0.25), value: audio.isMuted)
         }
         .buttonStyle(.plain)
