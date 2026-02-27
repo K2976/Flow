@@ -95,6 +95,7 @@ struct DashboardView: View {
             // DND loading overlay
             if showDNDLoading {
                 ColdLoadingView(isPresented: $showDNDLoading)
+                    .ignoresSafeArea()
                     .transition(.opacity)
                     .zIndex(200)
             }
@@ -184,7 +185,9 @@ struct DashboardView: View {
                 HStack(spacing: 10) {
                     // Focus Mode (DND) Toggle
                     Button {
-                        showDNDLoading = true
+                        withAnimation(.easeOut(duration: 0.3)) {
+                            showDNDLoading = true
+                        }
                         DispatchQueue.main.asyncAfter(deadline: .now() + 2.5) {
                             withAnimation(FlowAnimation.viewTransition) {
                                 engine.isFocusMode.toggle()
@@ -244,17 +247,25 @@ struct DashboardView: View {
                 HStack(spacing: 10) {
                     // Demo Mode Toggle
                     Button {
-                        withAnimation(FlowAnimation.viewTransition) {
-                            demoManager.isDemoMode.toggle()
-                            sessionManager.setDemoMode(demoManager.isDemoMode)
-                            
-                            if demoManager.isDemoMode {
-                                realDetector.stop()
-                                simulation.userHasInteracted = false
-                                simulation.startSimulation(engine: engine)
-                            } else {
-                                simulation.stopSimulation()
-                                realDetector.start(engine: engine)
+                        withAnimation(.easeOut(duration: 0.3)) {
+                            showDNDLoading = true
+                        }
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 2.5) {
+                            withAnimation(FlowAnimation.viewTransition) {
+                                demoManager.isDemoMode.toggle()
+                                sessionManager.setDemoMode(demoManager.isDemoMode)
+                                
+                                if demoManager.isDemoMode {
+                                    realDetector.stop()
+                                    simulation.userHasInteracted = false
+                                    simulation.startSimulation(engine: engine)
+                                } else {
+                                    simulation.stopSimulation()
+                                    realDetector.start(engine: engine)
+                                }
+                            }
+                            withAnimation(.easeOut(duration: 0.5)) {
+                                showDNDLoading = false
                             }
                         }
                     } label: {
