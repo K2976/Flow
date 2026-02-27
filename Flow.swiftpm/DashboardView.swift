@@ -259,15 +259,28 @@ struct DashboardView: View {
                         }
                         DispatchQueue.main.asyncAfter(deadline: .now() + 2.5) {
                             withAnimation(FlowAnimation.viewTransition) {
+                                // Stop current mode
+                                if demoManager.isDemoMode {
+                                    simulation.stopSimulation()
+                                } else {
+                                    realDetector.stop()
+                                }
+                                
+                                // Reset everything like ending a session
+                                engine.resetSession()
+                                
+                                // Toggle mode
                                 demoManager.isDemoMode.toggle()
                                 sessionManager.setDemoMode(demoManager.isDemoMode)
                                 
+                                // Start fresh session in new mode
+                                sessionManager.startNewSession(engine: engine)
+                                
+                                // Start appropriate detector
                                 if demoManager.isDemoMode {
-                                    realDetector.stop()
                                     simulation.userHasInteracted = false
                                     simulation.startSimulation(engine: engine)
                                 } else {
-                                    simulation.stopSimulation()
                                     realDetector.start(engine: engine)
                                 }
                             }

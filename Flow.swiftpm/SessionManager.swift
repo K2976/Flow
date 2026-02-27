@@ -20,6 +20,8 @@ final class SessionManager {
     init(isDemoMode: Bool = true) {
         if isDemoMode {
             generateMockHistory()
+        } else {
+            generateEmptyHistory()
         }
     }
     
@@ -28,7 +30,7 @@ final class SessionManager {
         if enabled {
             generateMockHistory()
         } else {
-            weekHistory.removeAll()
+            generateEmptyHistory()
         }
     }
     
@@ -146,17 +148,47 @@ final class SessionManager {
         weekHistory = days
     }
     
+    /// Generate 7 empty day entries for non-demo mode
+    private func generateEmptyHistory() {
+        let calendar = Calendar.current
+        var days: [DaySummary] = []
+        
+        for i in (0..<7).reversed() {
+            guard let date = calendar.date(byAdding: .day, value: -i, to: Date()) else { continue }
+            days.append(DaySummary(
+                date: date,
+                averageScore: 0,
+                peakScore: 0,
+                eventCount: 0,
+                totalMinutes: 0
+            ))
+        }
+        
+        weekHistory = days
+    }
+    
     private func updateTodayHistory(record: SessionRecord) {
         let calendar = Calendar.current
         if let index = weekHistory.firstIndex(where: { calendar.isDate($0.date, inSameDayAs: Date()) }) {
             let existing = weekHistory[index]
             weekHistory[index] = DaySummary(
                 date: Date(),
-                averageScore: (existing.averageScore + record.averageScore) / 2,
+                averageScore: existing.averageScore == 0
+                    ? record.averageScore
+                    : (existing.averageScore + record.averageScore) / 2,
                 peakScore: max(existing.peakScore, record.peakScore),
                 eventCount: existing.eventCount + record.eventCount,
                 totalMinutes: existing.totalMinutes + record.endTime.timeIntervalSince(record.startTime) / 60
             )
+        } else {
+            // Today not in history yet — add it
+            weekHistory.append(DaySummary(
+                date: Date(),
+                averageScore: record.averageScore,
+                peakScore: record.peakScore,
+                eventCount: record.eventCount,
+                totalMinutes: record.endTime.timeIntervalSince(record.startTime) / 60
+            ))
         }
     }
 }
