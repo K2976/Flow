@@ -7,6 +7,7 @@ struct RecoveryView: View {
     @Binding var isPresented: Bool
     
     @State private var showColdLoading = false
+    @State private var scoreCheckTimer: Timer?
     
     var body: some View {
         ZStack {
@@ -64,6 +65,7 @@ struct RecoveryView: View {
             // Cinematic loading overlay during reset
             if showColdLoading {
                 ColdLoadingView(isPresented: $showColdLoading)
+                    .ignoresSafeArea()
                     .transition(.opacity)
                     .zIndex(100)
             }
@@ -71,29 +73,47 @@ struct RecoveryView: View {
         .animation(FlowAnimation.viewTransition, value: showColdLoading)
         .onChange(of: showColdLoading) { _, newValue in
             if !newValue {
-                // Loading screen dismissed — close recovery
+                scoreCheckTimer?.invalidate()
+                scoreCheckTimer = nil
                 isPresented = false
             }
         }
     }
     
     private func startRecovery() {
+        let baseScore: Double = 20
+        let currentScore = engine.score
+        let scoreToDrop = max(currentScore - baseScore, 0)
+        
+        // Scale decay duration based on how much score needs to drop
+        // Higher score = longer decay (roughly 0.05s per point)
+        let decayDuration = max(scoreToDrop * 0.05, 2.0)
+        
         // Trigger score decay
-        engine.triggerAcceleratedDecay(amount: max(engine.score - 20, 0), duration: 2)
+        engine.triggerAcceleratedDecay(amount: scoreToDrop, duration: decayDuration)
         
         // Show cinematic loading screen
         withAnimation(FlowAnimation.viewTransition) {
             showColdLoading = true
         }
         
-        // Complete after decay finishes
-        DispatchQueue.main.asyncAfter(deadline: .now() + 2.5) {
-            engine.markReset()
-            engine.setScore(20)
-            
-            // Dismiss loading screen (which then dismisses recovery)
-            withAnimation(.easeOut(duration: 0.5)) {
-                showColdLoading = false
+        // Poll engine score — dismiss only when score reaches baseline + 1 extra second
+        scoreCheckTimer = Timer.scheduledTimer(withTimeInterval: 0.2, repeats: true) { _ in
+            Task { @MainActor in
+                if engine.score <= baseScore + 1 {
+                    // Score reached baseline — wait 1 more second then dismiss
+                    scoreCheckTimer?.invalidate()
+                    scoreCheckTimer = nil
+                    
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                        engine.markReset()
+                        engine.setScore(baseScore)
+                        
+                        withAnimation(.easeOut(duration: 0.5)) {
+                            showColdLoading = false
+                        }
+                    }
+                }
             }
         }
     }
