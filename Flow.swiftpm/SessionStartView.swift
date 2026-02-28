@@ -4,6 +4,7 @@ import SwiftUI
 
 struct SessionStartView: View {
     @Environment(CognitiveLoadEngine.self) private var engine
+    @Environment(\.flowScale) private var s
     @Binding var isPresented: Bool
     
     @State private var showPrompt = false
@@ -18,7 +19,7 @@ struct SessionStartView: View {
                 .ignoresSafeArea()
             
             if !showColdLoading {
-                VStack(spacing: 36) {
+                VStack(spacing: 36 * s) {
                     Spacer()
                     
                     // Orb preview
@@ -26,22 +27,22 @@ struct SessionStartView: View {
                         score: selectedLevel != nil
                             ? [10.0, 30, 50, 70, 90][selectedLevel! - 1]
                             : 30,
-                        size: 160
+                        size: 160 * s
                     )
                     
                     // Prompt
                     if showPrompt {
-                        VStack(spacing: 20) {
+                        VStack(spacing: 20 * s) {
                             Text("How focused are you right now?")
-                                .font(.system(size: 18, weight: .semibold, design: .rounded))
+                                .font(.system(size: 18 * s, weight: .semibold, design: .rounded))
                                 .foregroundStyle(.white.opacity(0.8))
                             
                             Text("Set your starting attention level")
-                                .font(.system(size: 13, weight: .regular, design: .rounded))
+                                .font(.system(size: 13 * s, weight: .regular, design: .rounded))
                                 .foregroundStyle(.white.opacity(0.4))
                             
                             // 5 orb choices
-                            HStack(spacing: 20) {
+                            HStack(spacing: 20 * s) {
                                 ForEach(1...5, id: \.self) { level in
                                     orbOption(level: level)
                                 }
@@ -52,7 +53,7 @@ struct SessionStartView: View {
                     
                     Spacer()
                 }
-                .padding(40)
+                .padding(40 * s)
                 .transition(.opacity)
             }
             
@@ -107,25 +108,25 @@ struct SessionStartView: View {
                 }
             }
         } label: {
-            VStack(spacing: 8) {
+            VStack(spacing: 8 * s) {
                 Circle()
                     .fill(
                         RadialGradient(
                             colors: [color, color.opacity(0.4)],
                             center: .center,
                             startRadius: 0,
-                            endRadius: 20
+                            endRadius: 20 * s
                         )
                     )
-                    .frame(width: isSelected ? 48 : 40, height: isSelected ? 48 : 40)
-                    .shadow(color: color.opacity(isSelected ? 0.8 : 0.3), radius: isSelected ? 15 : 5)
+                    .frame(width: (isSelected ? 48 : 40) * s, height: (isSelected ? 48 : 40) * s)
+                    .shadow(color: color.opacity(isSelected ? 0.8 : 0.3), radius: (isSelected ? 15 : 5) * s)
                     .overlay(
                         Circle()
                             .stroke(Color.white.opacity(isSelected ? 0.4 : 0), lineWidth: 2)
                     )
                 
                 Text(label)
-                    .font(.system(size: 10, weight: .semibold, design: .rounded))
+                    .font(.system(size: 10 * s, weight: .semibold, design: .rounded))
                     .foregroundStyle(.white.opacity(isSelected ? 0.9 : 0.4))
             }
         }

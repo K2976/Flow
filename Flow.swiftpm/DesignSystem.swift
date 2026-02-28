@@ -208,6 +208,29 @@ struct AmbientBackground: View {
 }
 
 
+// MARK: - Responsive Scaling
+
+private struct FlowScaleKey: EnvironmentKey {
+    static let defaultValue: CGFloat = 1.0
+}
+
+extension EnvironmentValues {
+    var flowScale: CGFloat {
+        get { self[FlowScaleKey.self] }
+        set { self[FlowScaleKey.self] = newValue }
+    }
+}
+
+struct FlowScale {
+    /// Compute scale factor from viewport size.
+    /// Reference: min dimension of 700pt = scale 1.0
+    static func factor(for size: CGSize) -> CGFloat {
+        let minDim = min(size.width, size.height)
+        let raw = minDim / 700.0
+        return min(max(raw, 0.55), 1.5)
+    }
+}
+
 // MARK: - Typography
 
 struct FlowTypography {

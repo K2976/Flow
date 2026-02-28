@@ -4,6 +4,7 @@ import SwiftUI
 
 struct RecoveryView: View {
     @Environment(CognitiveLoadEngine.self) private var engine
+    @Environment(\.flowScale) private var s
     @Binding var isPresented: Bool
     
     @State private var showColdLoading = false
@@ -20,30 +21,30 @@ struct RecoveryView: View {
                     }
                 
                 // Reset warning message
-                VStack(spacing: 16) {
+                VStack(spacing: 16 * s) {
                     Image(systemName: "exclamationmark.triangle.fill")
-                        .font(.system(size: 32))
+                        .font(.system(size: 32 * s))
                         .foregroundStyle(.orange.opacity(0.8))
                     
                     Text("Reset Attention Score?")
-                        .font(FlowTypography.labelFont(size: 18))
+                        .font(FlowTypography.labelFont(size: 18 * s))
                         .foregroundStyle(.white.opacity(0.8))
                     
                     Text("Your current score of \(Int(engine.score)) will be reset to baseline.\nThis action cannot be undone.")
-                        .font(FlowTypography.bodyFont(size: 14))
+                        .font(FlowTypography.bodyFont(size: 14 * s))
                         .foregroundStyle(.white.opacity(0.4))
                         .multilineTextAlignment(.center)
                     
-                    HStack(spacing: 14) {
+                    HStack(spacing: 14 * s) {
                         // Cancel
                         Button {
                             withAnimation { isPresented = false }
                         } label: {
                             Text("Cancel")
-                                .font(FlowTypography.labelFont(size: 15))
+                                .font(FlowTypography.labelFont(size: 15 * s))
                                 .foregroundStyle(.white.opacity(0.6))
-                                .padding(.horizontal, 24)
-                                .padding(.vertical, 12)
+                                .padding(.horizontal, 24 * s)
+                                .padding(.vertical, 12 * s)
                                 .background(
                                     Capsule()
                                         .fill(.white.opacity(0.08))
@@ -60,10 +61,10 @@ struct RecoveryView: View {
                             startRecovery()
                         } label: {
                             Text("Reset Attention")
-                                .font(FlowTypography.labelFont(size: 15))
+                                .font(FlowTypography.labelFont(size: 15 * s))
                                 .foregroundStyle(.white)
-                                .padding(.horizontal, 24)
-                                .padding(.vertical, 12)
+                                .padding(.horizontal, 24 * s)
+                                .padding(.vertical, 12 * s)
                                 .background(
                                     Capsule()
                                         .fill(.orange.opacity(0.4))
@@ -76,9 +77,9 @@ struct RecoveryView: View {
                         .buttonStyle(.plain)
                     }
                 }
-                .padding(40)
+                .padding(40 * s)
                 .background(
-                    RoundedRectangle(cornerRadius: 20)
+                    RoundedRectangle(cornerRadius: 20 * s)
                         .fill(.ultraThinMaterial)
                         .colorScheme(.dark)
                 )

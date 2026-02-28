@@ -84,44 +84,50 @@ struct ContentView: View {
     @State private var showLaunchScreen = true
     
     var body: some View {
-        ZStack {
-            if !hasOnboarded {
-                OnboardingView(hasOnboarded: $hasOnboarded)
-                    .transition(.opacity)
-                    .onDisappear {
-                        // Start simulation or real detection after onboarding
-                        if demoManager.isDemoMode {
-                            simulation.startSimulation(engine: engine)
-                        } else {
-                            realDetector.start(engine: engine)
-                        }
-                    }
-            } else if showFocusMode {
-                FocusModeView(haptics: haptics, isPresented: $showFocusMode)
-                    .transition(.opacity)
-            } else {
-                DashboardView(haptics: haptics)
-                    .transition(.opacity)
-            }
+        GeometryReader { geo in
+            let scale = FlowScale.factor(for: geo.size)
             
-            // Launch loading screen overlay
-            if showLaunchScreen && hasOnboarded {
-                ColdLoadingView(isPresented: $showLaunchScreen)
-                    .transition(.opacity)
-                    .zIndex(100)
-                    .onAppear {
-                        // Auto-dismiss after animation completes
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 2.5) {
-                            withAnimation(.easeOut(duration: 0.5)) {
-                                showLaunchScreen = false
+            ZStack {
+                if !hasOnboarded {
+                    OnboardingView(hasOnboarded: $hasOnboarded)
+                        .transition(.opacity)
+                        .onDisappear {
+                            // Start simulation or real detection after onboarding
+                            if demoManager.isDemoMode {
+                                simulation.startSimulation(engine: engine)
+                            } else {
+                                realDetector.start(engine: engine)
                             }
                         }
-                    }
+                } else if showFocusMode {
+                    FocusModeView(haptics: haptics, isPresented: $showFocusMode)
+                        .transition(.opacity)
+                } else {
+                    DashboardView(haptics: haptics)
+                        .transition(.opacity)
+                }
+                
+                // Launch loading screen overlay
+                if showLaunchScreen && hasOnboarded {
+                    ColdLoadingView(isPresented: $showLaunchScreen)
+                        .transition(.opacity)
+                        .zIndex(100)
+                        .onAppear {
+                            // Auto-dismiss after animation completes
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 2.5) {
+                                withAnimation(.easeOut(duration: 0.5)) {
+                                    showLaunchScreen = false
+                                }
+                            }
+                        }
+                }
             }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .environment(\.flowScale, scale)
+            .animation(FlowAnimation.viewTransition, value: hasOnboarded)
+            .animation(FlowAnimation.viewTransition, value: showFocusMode)
+            .animation(.easeOut(duration: 0.5), value: showLaunchScreen)
         }
-        .animation(FlowAnimation.viewTransition, value: hasOnboarded)
-        .animation(FlowAnimation.viewTransition, value: showFocusMode)
-        .animation(.easeOut(duration: 0.5), value: showLaunchScreen)
         // Keyboard shortcuts (local only — sandbox safe)
         .background {
             // Hidden buttons for keyboard shortcuts

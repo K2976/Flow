@@ -5,6 +5,7 @@ import Charts
 
 struct CognitiveLoadGraphView: View {
     @Environment(CognitiveLoadEngine.self) private var engine
+    @Environment(\.flowScale) private var s
     
     // Throttled data — only updates every 2 seconds instead of on every event
     @State private var displayHistory: [LoadSnapshot] = []
@@ -13,9 +14,9 @@ struct CognitiveLoadGraphView: View {
     @State private var updateTimer: Timer?
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
+        VStack(alignment: .leading, spacing: 8 * s) {
             Text("ATTENTION TIMELINE")
-                .font(FlowTypography.captionFont(size: 11))
+                .font(FlowTypography.captionFont(size: 11 * s))
                 .foregroundStyle(.white.opacity(0.4))
                 .tracking(1.5)
             
@@ -73,15 +74,15 @@ struct CognitiveLoadGraphView: View {
                         .foregroundStyle(.white.opacity(0.25))
                         .lineStyle(StrokeStyle(lineWidth: 1, dash: [3, 3]))
                         .annotation(position: .top, alignment: .center) {
-                            HStack(spacing: 3) {
+                            HStack(spacing: 3 * s) {
                                 Image(systemName: "arrow.counterclockwise")
-                                    .font(.system(size: 7))
+                                    .font(.system(size: 7 * s))
                                 Text("Reset")
-                                    .font(FlowTypography.captionFont(size: 8))
+                                    .font(FlowTypography.captionFont(size: 8 * s))
                             }
                             .foregroundStyle(.white.opacity(0.35))
-                            .padding(.horizontal, 4)
-                            .padding(.vertical, 2)
+                            .padding(.horizontal, 4 * s)
+                            .padding(.vertical, 2 * s)
                             .background(
                                 Capsule()
                                     .fill(.white.opacity(0.06))
@@ -95,7 +96,7 @@ struct CognitiveLoadGraphView: View {
                     AxisValueLabel {
                         if let v = value.as(Int.self) {
                             Text("\(v)")
-                                .font(FlowTypography.captionFont(size: 9))
+                                .font(FlowTypography.captionFont(size: 9 * s))
                                 .foregroundStyle(.white.opacity(0.3))
                         }
                     }
@@ -106,7 +107,7 @@ struct CognitiveLoadGraphView: View {
             .chartXAxis {
                 AxisMarks(values: .automatic(desiredCount: 5)) { _ in
                     AxisValueLabel(format: .dateTime.hour(.defaultDigits(amPM: .omitted)).minute(.twoDigits))
-                        .font(FlowTypography.captionFont(size: 9))
+                        .font(FlowTypography.captionFont(size: 9 * s))
                         .foregroundStyle(.white.opacity(0.3))
                     AxisGridLine()
                         .foregroundStyle(.white.opacity(0.05))
@@ -117,7 +118,7 @@ struct CognitiveLoadGraphView: View {
                     .background(.white.opacity(0.02))
                     .border(.white.opacity(0.05), width: 0.5)
             }
-            .frame(height: 140)
+            .frame(height: 140 * s)
             .drawingGroup()
         }
         .onAppear { startThrottledUpdates() }

@@ -5,6 +5,7 @@ import SwiftUI
 struct SessionSummaryView: View {
     @Environment(CognitiveLoadEngine.self) private var engine
     @Environment(SessionManager.self) private var sessionManager
+    @Environment(\.flowScale) private var s
     
     let session: SessionRecord
     
@@ -34,15 +35,15 @@ struct SessionSummaryView: View {
             
             // Card
             ZStack(alignment: .topLeading) {
-                VStack(spacing: 24) {
+                VStack(spacing: 24 * s) {
                 // Header
-                VStack(spacing: 8) {
+                VStack(spacing: 8 * s) {
                     Image(systemName: "checkmark.circle.fill")
-                        .font(.system(size: 28))
+                        .font(.system(size: 28 * s))
                         .foregroundStyle(FlowColors.color(for: 25))
                     
                     Text("Session Complete")
-                        .font(FlowTypography.headingFont(size: 20))
+                        .font(FlowTypography.headingFont(size: 20 * s))
                         .foregroundStyle(.white.opacity(0.9))
                 }
                 
@@ -53,7 +54,7 @@ struct SessionSummaryView: View {
                 LazyVGrid(columns: [
                     GridItem(.flexible()),
                     GridItem(.flexible())
-                ], spacing: 16) {
+                ], spacing: 16 * s) {
                     statItem(label: "Duration", value: formattedDuration)
                     statItem(label: "Events", value: "\(session.eventCount)")
                     statItem(label: "Start", value: "\(Int(session.startScore))")
@@ -66,29 +67,29 @@ struct SessionSummaryView: View {
                     .background(.white.opacity(0.1))
                 
                 // Reflection
-                VStack(spacing: 8) {
+                VStack(spacing: 8 * s) {
                     Text(ScienceInsights.reflectionLine(for: session))
-                        .font(FlowTypography.bodyFont(size: 14))
+                        .font(FlowTypography.bodyFont(size: 14 * s))
                         .foregroundStyle(.white.opacity(0.6))
                         .multilineTextAlignment(.center)
                     
                     Text(ScienceInsights.recoveryCost(for: session))
-                        .font(FlowTypography.captionFont(size: 12))
+                        .font(FlowTypography.captionFont(size: 12 * s))
                         .foregroundStyle(.white.opacity(0.3))
                 }
                 
                 // Science insight
                 Text(ScienceInsights.insightForState(CognitiveState.from(score: session.endScore)))
-                    .font(FlowTypography.captionFont(size: 12))
+                    .font(FlowTypography.captionFont(size: 12 * s))
                     .foregroundStyle(.white.opacity(0.35))
                     .multilineTextAlignment(.center)
-                    .padding(.horizontal, 8)
+                    .padding(.horizontal, 8 * s)
                 
                 if showNamePicker {
                     // Name picker — click to select, then confirm
-                    VStack(spacing: 10) {
+                    VStack(spacing: 10 * s) {
                         Text("Choose a name for this session")
-                            .font(FlowTypography.captionFont(size: 12))
+                            .font(FlowTypography.captionFont(size: 12 * s))
                             .foregroundStyle(.white.opacity(0.5))
                         
                         // Preset name grid
@@ -96,7 +97,7 @@ struct SessionSummaryView: View {
                             GridItem(.flexible()),
                             GridItem(.flexible()),
                             GridItem(.flexible())
-                        ], spacing: 8) {
+                        ], spacing: 8 * s) {
                             ForEach(presetNames, id: \.self) { name in
                                 Button {
                                     withAnimation(.easeInOut(duration: 0.15)) {
@@ -104,18 +105,18 @@ struct SessionSummaryView: View {
                                     }
                                 } label: {
                                     Text(name)
-                                        .font(FlowTypography.captionFont(size: 11))
+                                        .font(FlowTypography.captionFont(size: 11 * s))
                                         .foregroundStyle(selectedName == name ? .white : .white.opacity(0.7))
                                         .frame(maxWidth: .infinity)
-                                        .padding(.vertical, 8)
+                                        .padding(.vertical, 8 * s)
                                         .background(
-                                            RoundedRectangle(cornerRadius: 8)
+                                            RoundedRectangle(cornerRadius: 8 * s)
                                                 .fill(selectedName == name ?
                                                       FlowColors.color(for: 30).opacity(0.35) :
                                                       .white.opacity(0.06))
                                         )
                                         .overlay(
-                                            RoundedRectangle(cornerRadius: 8)
+                                            RoundedRectangle(cornerRadius: 8 * s)
                                                 .stroke(selectedName == name ?
                                                         FlowColors.color(for: 30).opacity(0.5) :
                                                         .white.opacity(0.1), lineWidth: 0.5)
@@ -133,16 +134,16 @@ struct SessionSummaryView: View {
                             }
                         } label: {
                             Text("Save as \"\(selectedName)\"")
-                                .font(FlowTypography.bodyFont(size: 13))
+                                .font(FlowTypography.bodyFont(size: 13 * s))
                                 .foregroundStyle(.white)
                                 .frame(maxWidth: .infinity)
-                                .padding(.vertical, 10)
+                                .padding(.vertical, 10 * s)
                                 .background(
-                                    RoundedRectangle(cornerRadius: 10)
+                                    RoundedRectangle(cornerRadius: 10 * s)
                                         .fill(FlowColors.color(for: 30).opacity(0.4))
                                 )
                                 .overlay(
-                                    RoundedRectangle(cornerRadius: 10)
+                                    RoundedRectangle(cornerRadius: 10 * s)
                                         .stroke(.white.opacity(0.15), lineWidth: 0.5)
                                 )
                         }
@@ -151,7 +152,7 @@ struct SessionSummaryView: View {
                     .transition(.opacity.combined(with: .move(edge: .bottom)))
                 } else {
                     // Buttons
-                    HStack(spacing: 16) {
+                    HStack(spacing: 16 * s) {
                         Button {
                             withAnimation(.easeInOut(duration: 0.25)) {
                                 selectedName = defaultSessionName
@@ -159,16 +160,16 @@ struct SessionSummaryView: View {
                             }
                         } label: {
                             Text("Save Session")
-                                .font(FlowTypography.bodyFont(size: 14))
+                                .font(FlowTypography.bodyFont(size: 14 * s))
                                 .foregroundStyle(.white.opacity(0.7))
                                 .frame(maxWidth: .infinity)
-                                .padding(.vertical, 10)
+                                .padding(.vertical, 10 * s)
                                 .background(
-                                    RoundedRectangle(cornerRadius: 10)
+                                    RoundedRectangle(cornerRadius: 10 * s)
                                         .fill(.white.opacity(0.06))
                                 )
                                 .overlay(
-                                    RoundedRectangle(cornerRadius: 10)
+                                    RoundedRectangle(cornerRadius: 10 * s)
                                         .stroke(.white.opacity(0.1), lineWidth: 0.5)
                                 )
                         }
@@ -181,16 +182,16 @@ struct SessionSummaryView: View {
                             }
                         } label: {
                             Text("New Session")
-                                .font(FlowTypography.bodyFont(size: 14))
+                                .font(FlowTypography.bodyFont(size: 14 * s))
                                 .foregroundStyle(.white)
                                 .frame(maxWidth: .infinity)
-                                .padding(.vertical, 10)
+                                .padding(.vertical, 10 * s)
                                 .background(
-                                    RoundedRectangle(cornerRadius: 10)
+                                    RoundedRectangle(cornerRadius: 10 * s)
                                         .fill(FlowColors.color(for: 30).opacity(0.4))
                                 )
                                 .overlay(
-                                    RoundedRectangle(cornerRadius: 10)
+                                    RoundedRectangle(cornerRadius: 10 * s)
                                         .stroke(.white.opacity(0.15), lineWidth: 0.5)
                                 )
                         }
@@ -206,9 +207,9 @@ struct SessionSummaryView: View {
                     }
                 } label: {
                     Image(systemName: "xmark")
-                        .font(.system(size: 12, weight: .bold))
+                        .font(.system(size: 12 * s, weight: .bold))
                         .foregroundStyle(.white.opacity(0.5))
-                        .frame(width: 28, height: 28)
+                        .frame(width: 28 * s, height: 28 * s)
                         .background(
                             Circle()
                                 .fill(.white.opacity(0.08))
@@ -220,20 +221,20 @@ struct SessionSummaryView: View {
                 }
                 .buttonStyle(.plain)
                 .focusable(false)
-                .padding(8)
+                .padding(8 * s)
             }
-            .padding(32)
-            .frame(width: 380)
+            .padding(32 * s)
+            .frame(width: 380 * s)
             .background(
-                RoundedRectangle(cornerRadius: 24)
+                RoundedRectangle(cornerRadius: 24 * s)
                     .fill(.ultraThinMaterial)
                     .colorScheme(.dark)
             )
             .overlay(
-                RoundedRectangle(cornerRadius: 24)
+                RoundedRectangle(cornerRadius: 24 * s)
                     .stroke(.white.opacity(0.08), lineWidth: 0.5)
             )
-            .shadow(color: .black.opacity(0.5), radius: 40, y: 10)
+            .shadow(color: .black.opacity(0.5), radius: 40 * s, y: 10 * s)
             .scaleEffect(appeared ? 1.0 : 0.9)
             .opacity(appeared ? 1.0 : 0.0)
             .onAppear {
@@ -278,14 +279,14 @@ struct SessionSummaryView: View {
     }
     
     private func statItem(label: String, value: String) -> some View {
-        VStack(spacing: 4) {
+        VStack(spacing: 4 * s) {
             Text(value)
-                .font(FlowTypography.labelFont(size: 22))
+                .font(FlowTypography.labelFont(size: 22 * s))
                 .foregroundStyle(.white.opacity(0.9))
                 .monospacedDigit()
             
             Text(label)
-                .font(FlowTypography.captionFont(size: 11))
+                .font(FlowTypography.captionFont(size: 11 * s))
                 .foregroundStyle(.white.opacity(0.35))
         }
     }

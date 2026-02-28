@@ -6,6 +6,7 @@ struct FocusModeView: View {
     @Environment(CognitiveLoadEngine.self) private var engine
     @Environment(SessionManager.self) private var sessionManager
     @Environment(AudioManager.self) private var audio
+    @Environment(\.flowScale) private var s
     
     let haptics: HapticsManager
     @Binding var isPresented: Bool
@@ -46,7 +47,7 @@ struct FocusModeView: View {
             Color.black.opacity(0.92)
                 .ignoresSafeArea()
             
-            VStack(spacing: 30) {
+            VStack(spacing: 30 * s) {
                 Spacer()
                 
                 // Breathing orb
@@ -54,7 +55,7 @@ struct FocusModeView: View {
                     // Timer ring
                     Circle()
                         .stroke(.white.opacity(0.06), lineWidth: 2)
-                        .frame(width: 280, height: 280)
+                        .frame(width: 280 * s, height: 280 * s)
                     
                     Circle()
                         .trim(from: 0, to: min(elapsedTime / (5 * 60), 1.0)) // 5 min max
@@ -62,17 +63,17 @@ struct FocusModeView: View {
                             FlowColors.color(for: engine.animatedScore).opacity(0.4),
                             style: StrokeStyle(lineWidth: 2, lineCap: .round)
                         )
-                        .frame(width: 280, height: 280)
+                        .frame(width: 280 * s, height: 280 * s)
                         .rotationEffect(.degrees(-90))
                     
-                    FocusOrbView(score: max(engine.animatedScore - 20, 5), size: 250)
+                    FocusOrbView(score: max(engine.animatedScore - 20, 5), size: 250 * s)
                         .scaleEffect(orbScale)
                 }
                 
                 // Breathe text
                 if showBreathText {
                     Text(breathPhase.label)
-                        .font(FlowTypography.labelFont(size: 22))
+                        .font(FlowTypography.labelFont(size: 22 * s))
                         .foregroundStyle(.white.opacity(0.6))
                         .transition(.opacity)
                         .animation(.easeInOut(duration: 0.8), value: breathPhase)
@@ -80,7 +81,7 @@ struct FocusModeView: View {
                 
                 // Cycle count
                 Text("Cycle \(cycleCount + 1)")
-                    .font(FlowTypography.captionFont(size: 12))
+                    .font(FlowTypography.captionFont(size: 12 * s))
                     .foregroundStyle(.white.opacity(0.25))
                 
                 Spacer()
@@ -90,15 +91,15 @@ struct FocusModeView: View {
                     engine.logEvent(.mindWandered)
                     haptics.playEventFeedback()
                 } label: {
-                    HStack(spacing: 8) {
+                    HStack(spacing: 8 * s) {
                         Image(systemName: "exclamationmark.circle")
-                            .font(.system(size: 14))
+                            .font(.system(size: 14 * s))
                         Text("Log Distraction")
-                            .font(FlowTypography.bodyFont(size: 14))
+                            .font(FlowTypography.bodyFont(size: 14 * s))
                     }
                     .foregroundStyle(.white.opacity(0.5))
-                    .padding(.horizontal, 20)
-                    .padding(.vertical, 10)
+                    .padding(.horizontal, 20 * s)
+                    .padding(.vertical, 10 * s)
                     .background(
                         Capsule().fill(.white.opacity(0.06))
                     )
@@ -113,13 +114,13 @@ struct FocusModeView: View {
                     endFocusMode()
                 } label: {
                     Text("End Focus")
-                        .font(FlowTypography.captionFont(size: 12))
+                        .font(FlowTypography.captionFont(size: 12 * s))
                         .foregroundStyle(.white.opacity(0.35))
                 }
                 .buttonStyle(.plain)
-                .padding(.bottom, 24)
+                .padding(.bottom, 24 * s)
             }
-            .padding(40)
+            .padding(40 * s)
         }
         .onReceive(timer) { _ in
             guard timerActive else { return }

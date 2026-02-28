@@ -4,6 +4,7 @@ import SwiftUI
 
 struct ColdLoadingView: View {
     @Binding var isPresented: Bool
+    @Environment(\.flowScale) private var s
     
     // Animation phases
     @State private var glowOpacity: Double = 0
@@ -37,7 +38,7 @@ struct ColdLoadingView: View {
                 ],
                 center: .center,
                 startRadius: 0,
-                endRadius: 200
+                endRadius: 200 * s
             )
             .scaleEffect(glowScale)
             .ignoresSafeArea()
@@ -55,8 +56,8 @@ struct ColdLoadingView: View {
             // Phase 3 + 5: App name reveal then rush forward
             ZStack {
                 Text("FLOW")
-                    .font(.system(size: 42, weight: .bold, design: .rounded))
-                    .tracking(12)
+                    .font(.system(size: 42 * s, weight: .bold, design: .rounded))
+                    .tracking(12 * s)
                     .foregroundStyle(.white.opacity(textOpacity * 0.88))
                     .blur(radius: textBlur)
                 
@@ -74,12 +75,12 @@ struct ColdLoadingView: View {
                             endPoint: .trailing
                         )
                     )
-                    .frame(width: 60, height: 50)
-                    .offset(x: sweepOffset)
+                    .frame(width: 60 * s, height: 50 * s)
+                    .offset(x: sweepOffset * s)
                     .mask(
                         Text("FLOW")
-                            .font(.system(size: 42, weight: .bold, design: .rounded))
-                            .tracking(12)
+                            .font(.system(size: 42 * s, weight: .bold, design: .rounded))
+                            .tracking(12 * s)
                     )
             }
             .scaleEffect(rushScale)

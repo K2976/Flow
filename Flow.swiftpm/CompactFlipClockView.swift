@@ -4,6 +4,7 @@ import SwiftUI
 
 struct CompactFlipClockView: View {
     @Environment(CognitiveLoadEngine.self) private var engine
+    @Environment(\.flowScale) private var s
     let date: Date
     
     var hours: Int {
@@ -17,23 +18,23 @@ struct CompactFlipClockView: View {
     var body: some View {
         let isHighLoad = engine.score > 50
         
-        HStack(spacing: 4) {
+        HStack(spacing: 4 * s) {
             // Hours
-            HStack(spacing: 2) {
-                FlipDigit(value: hours / 10)
-                FlipDigit(value: hours % 10)
+            HStack(spacing: 2 * s) {
+                FlipDigit(value: hours / 10, scale: s)
+                FlipDigit(value: hours % 10, scale: s)
             }
             
             Text(":")
-                .font(.system(size: 40, weight: .bold, design: .monospaced))
+                .font(.system(size: 40 * s, weight: .bold, design: .monospaced))
                 .foregroundColor(.white)
                 .opacity(0.45)
-                .offset(y: -2)
+                .offset(y: -2 * s)
             
             // Minutes
-            HStack(spacing: 4) {
-                FlipDigit(value: minutes / 10)
-                FlipDigit(value: minutes % 10)
+            HStack(spacing: 4 * s) {
+                FlipDigit(value: minutes / 10, scale: s)
+                FlipDigit(value: minutes % 10, scale: s)
             }
         }
         .opacity(isHighLoad ? 0.85 : 1.0)
@@ -45,13 +46,15 @@ struct CompactFlipClockView: View {
 
 struct FlipDigit: View {
     let value: Int
+    let scale: CGFloat
     @State private var currentValue: Int
     @State private var nextValue: Int
     @State private var flipPhase: Double = 0
     @State private var isFlipping = false
     
-    init(value: Int) {
+    init(value: Int, scale: CGFloat = 1.0) {
         self.value = value
+        self.scale = scale
         self._currentValue = State(initialValue: value)
         self._nextValue = State(initialValue: value)
     }
@@ -60,13 +63,13 @@ struct FlipDigit: View {
         ZStack {
             // BACK layer (static during flip)
             VStack(spacing: 1) {
-                HalfDigit(value: nextValue, isTop: true)
-                HalfDigit(value: currentValue, isTop: false)
+                HalfDigit(value: nextValue, isTop: true, scale: scale)
+                HalfDigit(value: currentValue, isTop: false, scale: scale)
             }
             
             // FRONT layer (animating flaps)
             VStack(spacing: 1) {
-                HalfDigit(value: flipPhase < 0.5 ? currentValue : nextValue, isTop: true)
+                HalfDigit(value: flipPhase < 0.5 ? currentValue : nextValue, isTop: true, scale: scale)
                     .rotation3DEffect(
                         .degrees(flipPhase < 0.5 ? -90 * (flipPhase * 2) : 0),
                         axis: (x: 1, y: 0, z: 0),
@@ -75,7 +78,7 @@ struct FlipDigit: View {
                     )
                     .opacity(flipPhase < 0.5 ? 1 : 0) // Hide when past 90 degrees
                 
-                HalfDigit(value: flipPhase >= 0.5 ? nextValue : currentValue, isTop: false)
+                HalfDigit(value: flipPhase >= 0.5 ? nextValue : currentValue, isTop: false, scale: scale)
                     .rotation3DEffect(
                         .degrees(flipPhase >= 0.5 ? 90 * (1 - (flipPhase - 0.5) * 2) : 90),
                         axis: (x: 1, y: 0, z: 0),
@@ -109,23 +112,30 @@ struct FlipDigit: View {
 struct HalfDigit: View {
     let value: Int
     let isTop: Bool
+    let scale: CGFloat
     
-    let width: CGFloat = 38
-    let fullHeight: CGFloat = 68
-    let halfHeight: CGFloat = 34
+    init(value: Int, isTop: Bool, scale: CGFloat = 1.0) {
+        self.value = value
+        self.isTop = isTop
+        self.scale = scale
+    }
+    
+    var width: CGFloat { 38 * scale }
+    var fullHeight: CGFloat { 68 * scale }
+    var halfHeight: CGFloat { 34 * scale }
     
     var body: some View {
         ZStack {
             Color(white: 0.08).opacity(0.8) // Transparent near-black background
             
             Text("\(value)")
-                .font(.system(size: 46, weight: .bold, design: .monospaced))
+                .font(.system(size: 46 * scale, weight: .bold, design: .monospaced))
                 .foregroundColor(.white)
                 .frame(width: width, height: fullHeight)
                 .offset(y: isTop ? halfHeight/2 : -halfHeight/2)
         }
         .frame(width: width, height: halfHeight)
         .clipped()
-        .cornerRadius(3.0)
+        .cornerRadius(3.0 * scale)
     }
 }
