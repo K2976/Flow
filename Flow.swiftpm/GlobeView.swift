@@ -463,11 +463,6 @@ final class GlobePlanetView: SCNView {
     #if os(macOS)
     override func mouseDown(with event: NSEvent) {
         let loc  = convert(event.locationInWindow, from: nil)
-        let hits = hitTest(loc, options: nil)
-        guard !hits.isEmpty else {
-            window?.performDrag(with: event)
-            return
-        }
         dragging   = true
         lastDragPt = loc
         lastDragTS = event.timestamp
@@ -497,6 +492,7 @@ final class GlobePlanetView: SCNView {
 
     override var acceptsFirstResponder: Bool { true }
     override func acceptsFirstMouse(for event: NSEvent?) -> Bool { true }
+    override var mouseDownCanMoveWindow: Bool { false }
 
     override func viewDidMoveToWindow() {
         super.viewDidMoveToWindow()
