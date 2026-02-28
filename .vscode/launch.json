@@ -1,0 +1,24 @@
+{
+    "configurations": [
+        {
+            "type": "swift",
+            "request": "launch",
+            "args": [],
+            "cwd": "${workspaceFolder:WWDC26}/Flow.swiftpm",
+            "name": "Debug Flow (Flow.swiftpm)",
+            "target": "Flow",
+            "configuration": "debug",
+            "preLaunchTask": "swift: Build Debug Flow (Flow.swiftpm)"
+        },
+        {
+            "type": "swift",
+            "request": "launch",
+            "args": [],
+            "cwd": "${workspaceFolder:WWDC26}/Flow.swiftpm",
+            "name": "Release Flow (Flow.swiftpm)",
+            "target": "Flow",
+            "configuration": "release",
+            "preLaunchTask": "swift: Build Release Flow (Flow.swiftpm)"
+        }
+    ]
+}

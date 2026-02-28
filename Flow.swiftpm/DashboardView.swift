@@ -140,20 +140,20 @@ struct DashboardView: View {
                 Spacer()
                 VStack(spacing: 3) {
                     Text("SESSION")
-                        .font(.system(size: 9, weight: .semibold, design: .rounded))
+                        .font(.system(size: 9, weight: .bold, design: .rounded))
                         .tracking(1.2)
-                        .foregroundStyle(.white.opacity(0.3))
+                        .foregroundStyle(.white.opacity(0.8))
                     
                     Text(sessionManager.formattedDuration)
-                        .font(.system(size: 16, weight: .semibold, design: .rounded))
-                        .foregroundStyle(.white.opacity(0.5))
+                        .font(.system(size: 16, weight: .bold, design: .rounded))
+                        .foregroundStyle(.white.opacity(0.8))
                         .monospacedDigit()
                 }
                 .padding(.horizontal, 14)
                 .padding(.vertical, 8)
                 .background(
                     RoundedRectangle(cornerRadius: 12, style: .continuous)
-                        .fill(.white.opacity(0.06))
+                        .fill(.white.opacity(0.1))
                 )
                 .overlay(
                     RoundedRectangle(cornerRadius: 12, style: .continuous)
