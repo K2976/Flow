@@ -16,7 +16,7 @@ struct GuideOverlayView: View {
         ZStack {
             // 1. Background Dim & Cutouts
             ZStack {
-                Color.black.opacity(0.75)
+                Color.black.opacity(0.9)
                     .background(.ultraThinMaterial)
                     .environment(\.colorScheme, .dark)
                     .onTapGesture {
@@ -180,6 +180,7 @@ struct GuideOverlayView: View {
                         s: s,
                         engine: engine
                     )
+                    .padding(.trailing, 60 * s)
                 }
                 Spacer()
             }
@@ -335,34 +336,34 @@ struct GuideCard: View {
         HStack(alignment: .top, spacing: 12 * s) {
             if hasIcon {
                 Image(systemName: "menubar.rectangle")
-                    .font(.system(size: 18 * s, weight: .regular))
+                    .font(.system(size: 16 * s, weight: .regular))
                     .foregroundColor(.white.opacity(0.6))
                     .padding(.top, 2 * s)
             }
             
             VStack(alignment: .leading, spacing: 6 * s) {
                 Text(label)
-                    .font(.system(size: 10 * s, weight: .semibold, design: .rounded))
+                    .font(.system(size: 9 * s, weight: .semibold, design: .rounded))
                     .tracking(1.5)
                     .foregroundColor(.white.opacity(0.5))
                     .textCase(.uppercase)
                 
                 Text(desc)
-                    .font(.system(size: 13 * s, weight: .regular, design: .rounded))
+                    .font(.system(size: 11.5 * s, weight: .regular, design: .rounded))
                     .foregroundColor(.white.opacity(0.85))
-                    .lineSpacing(3)
+                    .lineSpacing(2.5)
                     .fixedSize(horizontal: false, vertical: true)
                 
                 if let note = note, !note.isEmpty {
                     Text(note)
-                        .font(.system(size: 11 * s, weight: .medium, design: .rounded))
+                        .font(.system(size: 10 * s, weight: .medium, design: .rounded))
                         .foregroundColor(FlowColors.color(for: engine.animatedScore).opacity(0.9))
                 }
             }
         }
-        .padding(.horizontal, 14 * s)
-        .padding(.vertical, 12 * s)
-        .frame(width: 220 * s, alignment: .leading)
+        .padding(.horizontal, 12 * s) // Slightly reduced padding
+        .padding(.vertical, 10 * s)
+        .frame(width: 190 * s, alignment: .leading) // Reduced card width
         .background(
             RoundedRectangle(cornerRadius: 14 * s, style: .continuous)
                 .fill(.ultraThinMaterial)

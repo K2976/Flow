@@ -90,10 +90,31 @@ final class GlobePlanetView: SCNView {
     // MARK: – Score Update ─────────────────────────────────────────────────────
 
     func updateScore(_ score: Double) {
-        // Only regenerate texture when the score changes meaningfully (>2 points)
         guard abs(score - lastAppliedScore) > 1.0 else { return }
         lastAppliedScore = score
-        planetMaterial?.diffuse.contents = Self.checkerTexture(score: score)
+        
+        let targetColor = FlowColors.color(for: score)
+        #if os(macOS)
+        let resolved = PlatformColor(targetColor).usingColorSpace(.deviceRGB) ?? PlatformColor(red: 0.3, green: 0.8, blue: 0.9, alpha: 1)
+        #else
+        let resolved = PlatformColor(targetColor)
+        #endif
+        
+        // Transition colors for nodes and arcs
+        SCNTransaction.begin()
+        SCNTransaction.animationDuration = 2.0 // Smooth color transition
+        
+        planetNode?.childNodes.forEach { node in
+            if node.name == "dot" || node.name == "activeDot" {
+                node.geometry?.firstMaterial?.diffuse.contents = resolved
+                node.geometry?.firstMaterial?.emission.contents = resolved
+            } else if node.name == "arc" {
+                node.geometry?.firstMaterial?.diffuse.contents = resolved.withAlphaComponent(0.6)
+                node.geometry?.firstMaterial?.emission.contents = resolved.withAlphaComponent(0.4)
+            }
+        }
+        
+        SCNTransaction.commit()
     }
 
     // MARK: – Scene Building ───────────────────────────────────────────────────
@@ -103,7 +124,8 @@ final class GlobePlanetView: SCNView {
         cam.fieldOfView = 38
         cam.zNear = 0.1
         cam.zFar  = 100
-
+        
+        // Perspective adjustment aids in depth feel
         let node = SCNNode()
         node.camera   = cam
         node.position = SCNVector3(0, 0, 5.5)
@@ -114,122 +136,281 @@ final class GlobePlanetView: SCNView {
         let amb = SCNNode()
         amb.light           = SCNLight()
         amb.light!.type      = .ambient
-        amb.light!.intensity = 260
+        // Increase ambient slightly so nodes don't go entirely black on back half
+        amb.light!.intensity = 350
         amb.light!.color     = PlatformColor.white
         scene.rootNode.addChildNode(amb)
 
         let main = SCNNode()
         main.light           = SCNLight()
         main.light!.type      = .directional
-        main.light!.intensity = 820
-        main.light!.color     = PlatformColor(white: 0.92, alpha: 1)
+        main.light!.intensity = 600
+        main.light!.color     = PlatformColor(white: 0.85, alpha: 1)
         main.eulerAngles      = SCNVector3(-0.6, -0.8, 0)
         scene.rootNode.addChildNode(main)
-
-        let fill = SCNNode()
-        fill.light           = SCNLight()
-        fill.light!.type      = .directional
-        fill.light!.intensity = 90
-        fill.light!.color     = PlatformColor(red: 0.5, green: 0.65, blue: 1.0, alpha: 1)
-        fill.eulerAngles      = SCNVector3(0, Float.pi * 0.65, 0)
-        scene.rootNode.addChildNode(fill)
     }
 
     private func addPlanet(to scene: SCNScene, score: Double) {
-        let sphere = SCNSphere(radius: 1.0)
-        sphere.segmentCount = 80
-
-        let mat = SCNMaterial()
-        mat.diffuse.contents  = Self.checkerTexture(score: score)
-        mat.specular.contents = PlatformColor(white: 0.18, alpha: 1)
-        mat.shininess         = 10
-        mat.lightingModel     = .phong
-        sphere.firstMaterial  = mat
-
-        planetMaterial = mat
-        lastAppliedScore = score
-
-        planetNode = SCNNode(geometry: sphere)
-        scene.rootNode.addChildNode(planetNode)
-    }
-
-    // MARK: – Score-Reactive Checker Texture ───────────────────────────────────
-
-    /// Generates a 2048×1024 equirectangular checker texture tinted with
-    /// the cognitive-load color from FlowColors.
-    private static func checkerTexture(score: Double) -> PlatformImage {
-        let W = 2048, H = 1024
+        planetNode = SCNNode()
         
-        let draw: (CGContext) -> Void = { ctx in
-            let swiftColor = FlowColors.color(for: score)
-            let resolved = PlatformColor(swiftColor)
-            var r: CGFloat = 0, g: CGFloat = 0, b: CGFloat = 0, a: CGFloat = 0
+        let currentSwiftColor = FlowColors.color(for: score)
+        #if os(macOS)
+        let resolved = PlatformColor(currentSwiftColor).usingColorSpace(.deviceRGB) ?? PlatformColor(red: 0.3, green: 0.8, blue: 0.9, alpha: 1)
+        #else
+        let resolved = PlatformColor(currentSwiftColor)
+        #endif
+        
+        let numDots = 250 // Amount of nodes for the point cloud
+        let radius: Float = 1.05 // Slightly larger than the old 1.0 solid orb to feel voluminous
+        
+        let goldenRatio = (1.0 + sqrt(5.0)) / 2.0
+        
+        var points: [SCNVector3] = []
+        
+        // 1. Generate Fibonacci Lattice wrapping a sphere
+        for i in 0..<numDots {
+            let theta = 2.0 * Float.pi * Float(i) / Float(goldenRatio)
+            let phi = acos(1.0 - 2.0 * (Float(i) + 0.5) / Float(numDots))
             
-            #if os(macOS)
-            let converted = resolved.usingColorSpace(.deviceRGB) ?? PlatformColor(red: 0.3, green: 0.5, blue: 0.9, alpha: 1)
-            converted.getRed(&r, green: &g, blue: &b, alpha: &a)
-            #else
-            resolved.getRed(&r, green: &g, blue: &b, alpha: &a)
-            #endif
-
-            // Dark cells: use a very dark version of the score color
-            let darkCell = CGColor(red: r * 0.12, green: g * 0.12, blue: b * 0.12, alpha: 1)
-            // Light cells: the score color at full brightness
-            let lightCell = CGColor(red: r, green: g, blue: b, alpha: 1)
-            // Grid lines: mid-tone of the score color
-            let gridLine = CGColor(red: r * 0.45, green: g * 0.45, blue: b * 0.45, alpha: 0.8)
-
-            // Fill background with dark cells
-            ctx.setFillColor(darkCell)
-            ctx.fill(CGRect(x: 0, y: 0, width: W, height: H))
-
-            // 16×8 checker grid
-            let cols = 16, rows = 8
-            let cW = CGFloat(W) / CGFloat(cols)
-            let cH = CGFloat(H) / CGFloat(rows)
-
-            for row in 0..<rows {
-                for col in 0..<cols {
-                    guard (row + col) % 2 == 0 else { continue }
-                    ctx.setFillColor(lightCell)
-                    ctx.fill(CGRect(x: CGFloat(col) * cW + 1.5, y: CGFloat(row) * cH + 1.5,
-                                    width: cW - 3, height: cH - 3))
+            // Convert to Cartesian
+            let x = radius * sin(phi) * cos(theta)
+            let y = radius * sin(phi) * sin(theta)
+            let z = radius * cos(phi)
+            
+            let point = SCNVector3(x, y, z)
+            points.append(point)
+            
+            // Randomly select active nodes to be slightly larger
+            let isActive = Float.random(in: 0...1) > 0.95
+            
+            // Material for dot
+            let mat = SCNMaterial()
+            mat.diffuse.contents = resolved
+            
+            // Soft glow
+            mat.emission.contents = resolved
+            mat.emission.intensity = isActive ? 1.0 : 0.6
+            
+            // Transparent blending for softer back-side
+            mat.transparent.contents = PlatformColor(white: 1.0, alpha: isActive ? 0.95 : 0.7)
+            mat.blendMode = .add
+            mat.isDoubleSided = false
+            
+            // Spherical geometry for dots
+            let dotRadius: CGFloat = isActive ? 0.025 : 0.015
+            let dotGeom = SCNSphere(radius: dotRadius)
+            dotGeom.segmentCount = 12 // Low poly ok for small dots
+            dotGeom.firstMaterial = mat
+            
+            let dotNode = SCNNode(geometry: dotGeom)
+            dotNode.position = point
+            dotNode.name = isActive ? "activeDot" : "dot"
+            
+            // If active, give it a tiny pulsing animation
+            if isActive {
+                let scaleUp = SCNAction.scale(to: 1.25, duration: TimeInterval.random(in: 2.5...4.0))
+                scaleUp.timingMode = .easeInEaseOut
+                let scaleDown = SCNAction.scale(to: 0.9, duration: TimeInterval.random(in: 2.5...4.0))
+                scaleDown.timingMode = .easeInEaseOut
+                dotNode.runAction(SCNAction.repeatForever(SCNAction.sequence([scaleUp, scaleDown])))
+            }
+            
+            planetNode.addChildNode(dotNode)
+        }
+        
+        // 2. Generate smooth connecting arcs between some neighboring points
+        let numArcs = 25
+        for _ in 0..<numArcs {
+            guard let ptA = points.randomElement(),
+                  let ptB = points.randomElement(),
+                  distance(ptA, ptB) > 0.2 && distance(ptA, ptB) < 0.6 else { continue }
+            
+            // Create bezier curve arching out from the sphere's surface slightly
+            let midPt = SCNVector3(
+                (ptA.x + ptB.x) / 2,
+                (ptA.y + ptB.y) / 2,
+                (ptA.z + ptB.z) / 2
+            )
+            
+            // Push midpt out radially
+            let mx = Float(midPt.x)
+            let my = Float(midPt.y)
+            let mz = Float(midPt.z)
+            let midLen = sqrt(mx*mx + my*my + mz*mz)
+            let arcHeight: Float = 1.15 // Peak of the arc
+            let elevatedMid = SCNVector3(
+                (mx / midLen) * arcHeight,
+                (my / midLen) * arcHeight,
+                (mz / midLen) * arcHeight
+            )
+            
+            let arcGeom = createArcGeometry(from: ptA, to: ptB, controlPoint: elevatedMid, segments: 16)
+            let arcMat = SCNMaterial()
+            arcMat.diffuse.contents = resolved.withAlphaComponent(0.6)
+            arcMat.emission.contents = resolved.withAlphaComponent(0.4)
+            arcMat.transparent.contents = PlatformColor(white: 1.0, alpha: 0.6)
+            arcMat.blendMode = .add
+            arcGeom.firstMaterial = arcMat
+            
+            let arcNode = SCNNode(geometry: arcGeom)
+            arcNode.name = "arc"
+            
+            // Pulse the arcs in and out
+            let fadeOut = SCNAction.fadeOpacity(to: 0.3, duration: TimeInterval.random(in: 3...5))
+            let fadeIn = SCNAction.fadeOpacity(to: 1.0, duration: TimeInterval.random(in: 3...5))
+            arcNode.runAction(SCNAction.repeatForever(SCNAction.sequence([fadeOut, fadeIn])))
+            arcNode.opacity = CGFloat.random(in: 0.3...1.0)
+            
+            planetNode.addChildNode(arcNode)
+        }
+        
+        scene.rootNode.addChildNode(planetNode)
+        lastAppliedScore = score
+    }
+    
+    // Distance helper
+    private func distance(_ a: SCNVector3, _ b: SCNVector3) -> Float {
+        let dx = Float(a.x) - Float(b.x)
+        let dy = Float(a.y) - Float(b.y)
+        let dz = Float(a.z) - Float(b.z)
+        
+        let dx2 = dx * dx
+        let dy2 = dy * dy
+        let dz2 = dz * dz
+        
+        return sqrt(dx2 + dy2 + dz2)
+    }
+    
+    // Build a tubular bezier curve
+    private func createArcGeometry(from start: SCNVector3, to end: SCNVector3, controlPoint: SCNVector3, segments: Int) -> SCNGeometry {
+        var vertices: [SCNVector3] = []
+        var indices: [UInt16] = []
+        
+        let sides = 4 // Square tube cross-section to keep vertex count low
+        let radius: Float = 0.003 // Very thin line
+        
+        // 1. Generate points along the quadratic bezier
+        var pathPoints: [SCNVector3] = []
+        for i in 0...segments {
+            let t = Float(i) / Float(segments)
+            let u = 1.0 - t
+            // B(t) = (1-t)^2 * P0 + 2t(1-t) * P1 + t^2 * P2
+            let u1 = u * u
+            let t1 = 2 * t * u
+            let t2 = t * t
+            
+            let x1 = u1 * Float(start.x)
+            let x2 = t1 * Float(controlPoint.x)
+            let x3 = t2 * Float(end.x)
+            let x = x1 + x2 + x3
+            
+            let y1 = u1 * Float(start.y)
+            let y2 = t1 * Float(controlPoint.y)
+            let y3 = t2 * Float(end.y)
+            let y = y1 + y2 + y3
+            
+            let z1 = u1 * Float(start.z)
+            let z2 = t1 * Float(controlPoint.z)
+            let z3 = t2 * Float(end.z)
+            let z = z1 + z2 + z3
+            pathPoints.append(SCNVector3(x, y, z))
+        }
+        
+        // 2. Extrude a small cross-section along the path
+        for i in 0...segments {
+            let pt = pathPoints[i]
+            
+            // We need a direction vector for the normal plane
+            let dir: SCNVector3
+            if i < segments {
+                let nextPt = pathPoints[i+1]
+                dir = SCNVector3(Float(nextPt.x) - Float(pt.x), Float(nextPt.y) - Float(pt.y), Float(nextPt.z) - Float(pt.z))
+            } else {
+                let prevPt = pathPoints[i-1]
+                dir = SCNVector3(Float(pt.x) - Float(prevPt.x), Float(pt.y) - Float(prevPt.y), Float(pt.z) - Float(prevPt.z))
+            }
+            
+            let dx = Float(dir.x)
+            let dy = Float(dir.y)
+            let dz = Float(dir.z)
+            let len = sqrt(dx*dx + dy*dy + dz*dz)
+            let fwd = SCNVector3(dx/len, dy/len, dz/len)
+            
+            // Create orthogonal vectors
+            var up = SCNVector3(0, 1, 0)
+            if abs(Float(fwd.y)) > 0.99 {
+                up = SCNVector3(1, 0, 0)
+            }
+            
+            let uX = Float(up.x); let uY = Float(up.y); let uZ = Float(up.z)
+            let fX = Float(fwd.x); let fY = Float(fwd.y); let fZ = Float(fwd.z)
+            
+            // Cross product
+            let right = SCNVector3(uY*fZ - uZ*fY, uZ*fX - uX*fZ, uX*fY - uY*fX)
+            let rX = Float(right.x); let rY = Float(right.y); let rZ = Float(right.z)
+            let rlen = sqrt(rX*rX + rY*rY + rZ*rZ)
+            let nRight = SCNVector3(rX/rlen, rY/rlen, rZ/rlen)
+            let nrX = Float(nRight.x); let nrY = Float(nRight.y); let nrZ = Float(nRight.z)
+            
+            // Re-cross for true up
+            let nUpX = fY*nrZ - fZ*nrY
+            let nUpY = fZ*nrX - fX*nrZ
+            let nUpZ = fX*nrY - fY*nrX
+            let nUp = SCNVector3(nUpX, nUpY, nUpZ)
+            
+            // Generate cross-section vertices
+            for s in 0..<sides {
+                let angle = Float(s) * 2.0 * Float.pi / Float(sides)
+                let c = cos(angle) * radius
+                let sAng = sin(angle) * radius
+                
+                let cX = c * Float(nRight.x)
+                let cY = c * Float(nRight.y)
+                let cZ = c * Float(nRight.z)
+                
+                let sX = sAng * Float(nUp.x)
+                let sY = sAng * Float(nUp.y)
+                let sZ = sAng * Float(nUp.z)
+                
+                let vx = Float(pt.x) + cX + sX
+                let vy = Float(pt.y) + cY + sY
+                let vz = Float(pt.z) + cZ + sZ
+                
+                vertices.append(SCNVector3(vx, vy, vz))
+            }
+            
+            // Generate triangles
+            if i > 0 {
+                let currRing = i * sides
+                let prevRing = (i - 1) * sides
+                
+                for s in 0..<sides {
+                    let nextS = (s + 1) % sides
+                    
+                    let v0 = UInt16(prevRing + s)
+                    let v1 = UInt16(currRing + s)
+                    let v2 = UInt16(currRing + nextS)
+                    let v3 = UInt16(prevRing + nextS)
+                    
+                    // Triangle 1
+                    indices.append(v0)
+                    indices.append(v1)
+                    indices.append(v2)
+                    
+                    // Triangle 2
+                    indices.append(v0)
+                    indices.append(v2)
+                    indices.append(v3)
                 }
             }
-
-            // Thin grid lines
-            ctx.setStrokeColor(gridLine)
-            ctx.setLineWidth(2.5)
-            for c in 0...cols {
-                let x = CGFloat(c) * cW
-                ctx.move(to: CGPoint(x: x, y: 0))
-                ctx.addLine(to: CGPoint(x: x, y: CGFloat(H)))
-            }
-            for row in 0...rows {
-                let y = CGFloat(row) * cH
-                ctx.move(to: CGPoint(x: 0, y: y))
-                ctx.addLine(to: CGPoint(x: CGFloat(W), y: y))
-            }
-            ctx.strokePath()
         }
         
-        #if os(macOS)
-        let img = NSImage(size: CGSize(width: W, height: H))
-        img.lockFocus()
-        defer { img.unlockFocus() }
-        if let ctx = NSGraphicsContext.current?.cgContext {
-            draw(ctx)
-        }
-        return img
-        #else
-        let format = UIGraphicsImageRendererFormat()
-        format.scale = 1
-        let renderer = UIGraphicsImageRenderer(size: CGSize(width: W, height: H), format: format)
-        return renderer.image { context in
-            draw(context.cgContext)
-        }
-        #endif
+        let src = SCNGeometrySource(vertices: vertices)
+        let element = SCNGeometryElement(indices: indices, primitiveType: .triangles)
+        return SCNGeometry(sources: [src], elements: [element])
     }
+
+    // (Texture generator removed for Point Cloud style)
 
     // MARK: – Frame Loop ───────────────────────────────────────────────────────
 
@@ -259,7 +440,11 @@ final class GlobePlanetView: SCNView {
         } else {
             velYaw   = 0
             velPitch = 0
-            applyDelta(yaw: autoYawRate * dt, pitch: 0)
+            
+            // Slow down the auto rotation to 120 seconds for full rotation
+            // 2PI radians / 120s = 0.0523 rad/s
+            let slowRate: Float = Float.pi * 2 / 120.0
+            applyDelta(yaw: slowRate * dt, pitch: 0)
         }
     }
 
