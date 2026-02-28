@@ -140,6 +140,18 @@ struct DashboardView: View {
         }
         .animation(.easeOut(duration: 0.3), value: showDNDLoading)
         .animation(.easeOut(duration: 0.3), value: showSessionStart)
+        .onChange(of: showSessionStart) { oldValue, newValue in
+            if oldValue == true && newValue == false && !hasSeenGuide && !showGuide {
+                // Attention picker just dismissed on first launch — show guide
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                    if !hasSeenGuide && !showGuide {
+                        withAnimation(.spring(response: 0.5, dampingFraction: 0.85)) {
+                            showGuide = true
+                        }
+                    }
+                }
+            }
+        }
         .onChange(of: showRecovery) { oldValue, newValue in
             if oldValue == true && newValue == false {
                 // Recovery just finished — ask attention level
@@ -169,16 +181,9 @@ struct DashboardView: View {
         .onAppear {
             audio.startAmbient()
             
-            // Auto open guide on first launch
-            if !hasSeenGuide {
-                DispatchQueue.main.asyncAfter(deadline: .now() + 3.1) {
-                    // Only open if the user hasn't opened it themselves or navigated to focus mode
-                    if !hasSeenGuide && !showGuide {
-                        withAnimation(.spring(response: 0.5, dampingFraction: 0.85)) {
-                            showGuide = true
-                        }
-                    }
-                }
+            // Always ask attention level on launch
+            withAnimation {
+                showSessionStart = true
             }
         }
     }
