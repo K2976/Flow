@@ -122,6 +122,16 @@ struct DashboardView: View {
                 }
             }
         }
+        .onChange(of: sessionManager.pendingAttentionPicker) { _, newValue in
+            if newValue {
+                sessionManager.pendingAttentionPicker = false
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                    withAnimation {
+                        showSessionStart = true
+                    }
+                }
+            }
+        }
         .onReceive(clockTimer) { _ in
             currentTime = demoManager.currentDate
         }

@@ -13,6 +13,7 @@ final class SessionManager {
     private(set) var savedSessions: [SessionRecord] = []
     private(set) var showingSummary: Bool = false
     private(set) var lastSession: SessionRecord?
+    var pendingAttentionPicker: Bool = false
     
     // 7-day history
     private(set) var weekHistory: [DaySummary] = []

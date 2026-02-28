@@ -179,6 +179,7 @@ struct SessionSummaryView: View {
                             triggerLoadingTransition {
                                 sessionManager.dismissSummary()
                                 sessionManager.startNewSession(engine: engine)
+                                sessionManager.pendingAttentionPicker = true
                             }
                         } label: {
                             Text("New Session")
