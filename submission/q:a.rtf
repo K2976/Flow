@@ -1,0 +1,63 @@
+{\rtf1\ansi\ansicpg1252\cocoartf2868
+\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fswiss\fcharset0 Helvetica-Bold;\f1\fswiss\fcharset0 Helvetica;\f2\fnil\fcharset0 HelveticaNeue-Bold;
+\f3\fnil\fcharset0 HelveticaNeue;}
+{\colortbl;\red255\green255\blue255;\red0\green0\blue0;\red243\green243\blue245;}
+{\*\expandedcolortbl;;\cssrgb\c0\c0\c0;\cssrgb\c96188\c96189\c96854;}
+\paperw11900\paperh16840\margl1440\margr1440\vieww19360\viewh13340\viewkind0
+\deftab720
+\pard\pardeftab720\qj\partightenfactor0
+
+\f0\b\fs28 \cf2 \expnd0\expndtw0\kerning0
+What problem is your app playground trying to solve and what inspired you to solve it?\
+
+\f1\b0\fs24 -There was a study session I still think about. I sat down with my notes open and somehow spent two hours switching between apps without finishing anything real. The frustrating part wasn't the distraction it was that I hadn't noticed it happening until it was already too late.\
+That's the problem Flow solves. Attention doesn't collapse suddenly it decays gradually, invisibly, one app switch at a time. Traditional focus timers treat concentration as binary: on or off. But that's not how the mind actually works.\
+I came across research on attention residue every context switch leaves a fragment of focus stuck on the previous task and I couldn't find a single app that made this visible in real time. So I built one. Flow tracks cognitive load as a live 0\'96100 score, visualizes it as a 3D geodesic orb that shifts from calm teal to stressed red, and plays binaural beats calibrated to your current state. Not a timer. Not a blocker. Just an honest mirror for your attention.\
+\
+
+\f0\b\fs28 Who would benefit from your app playground and how?\
+
+\f1\b0\fs24 I built Flow for myself first, a college student who sits down to study and loses track of how fragmented the session has become before it's too late to recover. But the problem is universal.\
+Students preparing for exams, developers deep in a coding session, writers trying to hold a thought anyone doing sustained knowledge work on a computer is quietly losing focus in ways nothing around them is showing them.\
+Flow gives that person something concrete. A live cognitive load score that rises with every app switch, notification, or moment of mind wandering and decays naturally as they settle back in. A geodesic orb that shifts color in real time so the cost of each distraction is visible, not abstract. Binaural beats that adapt intensity to their current state. A 7-day history strip that reveals which days and habits consistently fragment their attention the most.\
+It doesn't tell you to focus. It shows you what your focus actually looks like and trusts you to do something with that.\
+\
+
+\f0\b\fs28 How did accessibility factor into your design process?\
+
+\f1\b0\fs24 \
+Accessibility in Flow isn't a checkbox it shaped some of the most deliberate design decisions in the app. The most intentional one is the menu bar companion orb. It sits permanently in the macOS menu bar regardless of what app you're in, giving users a passive, always-available cognitive load monitor without ever needing to switch windows or interact with the main interface. For users who find full-screen focus tools overwhelming or disruptive, this is Flow's most accessible feature your mental state is visible at a glance, always, with zero friction. Every cognitive state also has a numeric score and text label alongside its color the interface never relies on color alone to communicate meaning. The coach mark guide overlay highlights every control with a glowing spotlight cutout and a plain-language description card, so any new user understands the full interface within seconds of opening the app. Interactive buttons have generous tap targets with clear visual feedback, and the session clock uses high-contrast monospaced typography against the dark background. Going forward, full VoiceOver labeling and respecting accessibilityReduceMotion are the next things I want to add because Flow is the kind of app that should work for everyone\
+\
+
+\f0\b\fs28 Describe which AI tools you used, what you used them for, and what you learned.
+\f1\b0\fs24 \
+I used GitHub Copilot throughout, in four ways.\
+For concepts I hadn't worked with before quaternion math for 3D globe rotation, DSP math for true stereo binaural beat synthesis, procedural WAV generation at the sample level I'd ask Copilot to explain the concept first, then write the implementation myself once I understood it. That's how I learned that binaural carrier frequencies need to stay above 200Hz for smooth perception, and how phase-aligned sine waves with ambient amplitude swells create seamless audio loops without bundled files.\
+For architecture decisions early on whether to use @Observable vs ObservableObject, how to structure state classes, how to pass data through SwiftUI's environment cleanly.\
+For debugging when SceneKit rendering broke in ways I genuinely couldn't read, Copilot helped me understand what the error actually meant, not just fix it.\
+And for boilerplate WAV file headers, SceneKit scene setup where the pattern is established and writing it manually would have slowed me down without teaching me anything.\
+What I learned is that AI is most useful when you treat it like a knowledgeable colleague. The decisions, the design, the why behind everything in Flow those stayed mine.\
+\
+
+\f0\b\fs28 What other technologies did you use in your app playground, and why did you choose them?\
+
+\f1\b0\fs24 SceneKit \'97 for the 3D geodesic orb. I needed direct control over procedural texture generation and real-time color transitions tied to a live score. SceneKit gave me that control, hardware-accelerated via Metal, with mouse-drag rotation and inertial spin built on quaternion math.\
+AVFoundation \'97 for ambient audio with no bundled files. I generate two stereo binaural beat tones entirely in code 30-second WAV buffers built sample-by-sample with dual carriers, shaped brown noise, and 0.07Hz ambient swells for seamless looping. I chose this because I wanted zero third-party dependencies.\
+Swift Charts \'97 for the attention timeline. It integrates cleanly with SwiftUI's data flow and handles animated updates without extra work. Gradient line marks reflect cognitive state color in real time.\
+CoreHaptics \'97 so the app has physical weight. Event impacts, breathing phase transitions, and session completion all have distinct haptic patterns. I wanted Flow to feel tactile, not just visual.\
+AppKit \'97 NSWorkspace for detecting real app switches, NSStatusItem for the persistent menu bar orb.\
+Zero third-party dependencies was a deliberate constraint. I wanted to see exactly how far native Swift and Apple's own frameworks could go and the answer surprised me.\
+\
+\pard\pardeftab720\qj\partightenfactor0
+
+\f2\b\fs28 \cf2 Beyond the Swift Student Challenge\
+Have you shared your app development knowledge with others or used your technology skills to support your community? Describe specific activities and impact. Note:\'a0This is about you, not your app.
+\f3\b0 \
+\pard\pardeftab720\qj\partightenfactor0
+
+\fs24 \cf2 Technology only matters when it solves something real that's what I try to build around.\
+I built a student-facing app for my college addressing a genuine friction point in campus life. I've competed in hackathons and won those taught me more about building fast and defending technical decisions under pressure than any classroom did.\
+I maintain an active GitHub and share work on LinkedIn not for an audience, but because public work forces you to think more carefully about what you're building and why. It's also how I've connected with developers who've pushed my thinking forward.\
+I've helped people around me get comfortable with tools they found intimidating. It matters to me that the people closest to me aren't left behind by technology they don't understand.\
+I'm also building ParkEazy a parking solution born from watching the problem affect people around me daily. Working prototype exists. It's the kind of problem that feels mundane until you realize how much time and stress it silently costs people every single day.\
+The thread across all of it I see something broken, I think about whether I can fix it, and then I try.}
